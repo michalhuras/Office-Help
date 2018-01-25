@@ -1,14 +1,17 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-01-23T21:46:55
+# Project created by QtCreator 2018-01-25T18:19:07
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += testlib
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       -= gui
 
-TARGET = officeHelp
+TARGET = tst_findingfilestest
+CONFIG   += console
+CONFIG   -= app_bundle
+
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -24,13 +27,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
-    RequestsHandler.cpp
+        tst_findingfilestest.cpp 
 
-HEADERS += \
-        mainwindow.h \
-    RequestsHandler.h
-
-FORMS += \
-        mainwindow.ui
+DEFINES += SRCDIR=\\\"$$PWD/\\\"
