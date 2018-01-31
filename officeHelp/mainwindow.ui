@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLineEdit" name="lineEdit_3">
+   <widget class="QLineEdit" name="pathBox">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -70,7 +70,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_2">
+   <widget class="QLineEdit" name="textToFindBox">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -116,7 +116,7 @@
      <string>Text to search </string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>440</x>

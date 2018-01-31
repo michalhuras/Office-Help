@@ -1,23 +1,25 @@
 #ifndef REUESTSHANDLER_H
 #define REUESTSHANDLER_H
 
-#define <QVector>
-#define <QString>
+#include <QVector>
+#include <QString>
+#include <QDebug>
 
 class RequestsHandler
 {
-
-private:
-	QVector<QString> listOfFiles;
-	QString catalogPath;
-	Qstring wordToSearch;
-	searchMode choosenSearchMode;
 public:
 	enum searchMode {
 		error = -1,
 		inThisCatalog = 0,
 		inThisCatalogRecursevely = 1,
 		inThisFile = 2};
+
+private:
+	QVector<QString> listOfFiles;
+	QString catalogPath;
+	QString wordToSearch;
+	searchMode choosenSearchMode;
+   // jakoś trzeba wcisnąć obserwatorów
 
 	RequestsHandler();
 	void createFileList();

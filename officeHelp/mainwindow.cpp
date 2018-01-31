@@ -14,3 +14,13 @@ MainWindow::~MainWindow()
 {
 	delete ui;
 }
+
+void MainWindow::on_pathBox_editingFinished()
+{
+	//tu będzie sygnał emitowany
+}
+
+void MainWindow::on_textToFindBox_editingFinished()
+{
+	//tu będzie sygnał emitowany
+}
