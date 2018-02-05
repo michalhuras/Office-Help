@@ -4,6 +4,7 @@
 #include <QVector>
 #include <QString>
 #include <QDebug>
+#include <boost\Signals.hpp>
 
 class RequestsHandler
 {
@@ -14,15 +15,25 @@ public:
 		inThisCatalogRecursevely = 1,
 		inThisFile = 2};
 
+public:
+	void catalogPathChangeSlot();
+	void wordToSearchChangeSlot();
+
+
 private:
 	QVector<QString> listOfFiles;
 	QString catalogPath;
 	QString wordToSearch;
 	searchMode choosenSearchMode;
-   // jakoś trzeba wcisnąć obserwatorów
+
 
 	RequestsHandler();
 	void createFileList();
+	void setCatalogPath();
+	void setWordToSearch();
+
+
+
 };
 
 #endif // REUESTSHANDLER_H
