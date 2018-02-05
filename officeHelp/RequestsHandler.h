@@ -4,10 +4,9 @@
 #include <QVector>
 #include <QString>
 #include <QDebug>
-#include <boost\Signals.hpp>
+#include "AbstractSubject.h"
 
-class RequestsHandler
-{
+class RequestsHandler :public AbstractSubject {
 public:
 	enum searchMode {
 		error = -1,

@@ -4,15 +4,14 @@
 #include <QMainWindow>
 #include <QString>
 #include <QDebug>
-#include <boost\Signals.hpp>
 #include "RequestsHandler.h"
+#include "AbstractSubject.h".h"
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow ,public AbstractSubject {
 	Q_OBJECT
 
 public:
