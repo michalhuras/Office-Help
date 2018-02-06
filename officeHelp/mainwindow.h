@@ -5,13 +5,12 @@
 #include <QString>
 #include <QDebug>
 #include "RequestsHandler.h"
-#include "AbstractSubject.h".h"
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow ,public AbstractSubject {
+class MainWindow : public QMainWindow {
 	Q_OBJECT
 
 public:
@@ -20,12 +19,16 @@ public:
 
 private:
 	Ui::MainWindow *ui;
-	QString path;
-	QString textToSearch;
+	QString mPath;
+	QString mTextToSearch;
 	RequestsHandler *mRequestsHandler;
 
+
+signals:
+	void onPathBoxEditingFinishedSignal(QString newValue);
+	void onTextToFindBoxEditingFinishedSignal(QString newValue);
+
 private slots:
-	void on_lineEdit_3_textChanged(const QString &arg1);
 	void on_pathBox_editingFinished();
 	void on_textToFindBox_editingFinished();
 };

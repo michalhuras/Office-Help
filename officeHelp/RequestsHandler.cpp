@@ -1,25 +1,16 @@
 #include "RequestsHandler.h"
 
 RequestsHandler::RequestsHandler() {
-	sig.connect(hello);
-}
-
-RequestsHandler::createFileList() {
 
 }
 
-RequestsHandler::catalogPathChangeSlot() {
+void RequestsHandler::catalogPathChangeSlot(QString newValue) {
 qDebug() << "catalog path changed";
 }
 
-RequestsHandler::wordToSearchChangeSlot() {
+void RequestsHandler::wordToSearchChangeSlot(QString newValue) {
 qDebug() << "word to search changed";
 }
 
-RequestsHandler::setCatalogPath() {
 
-}
 
-RequestsHandler::setWordToSearch() {
-
-}

@@ -4,19 +4,22 @@
 #include <QVector>
 #include <QString>
 #include <QDebug>
-#include "AbstractSubject.h"
+#include <QObject>
 
-class RequestsHandler :public AbstractSubject {
+class RequestsHandler :public QObject {
+	Q_OBJECT
+
 public:
+	RequestsHandler();
 	enum searchMode {
 		error = -1,
 		inThisCatalog = 0,
 		inThisCatalogRecursevely = 1,
 		inThisFile = 2};
 
-public:
-	void catalogPathChangeSlot();
-	void wordToSearchChangeSlot();
+public slots:
+	void catalogPathChangeSlot(QString newValue);
+	void wordToSearchChangeSlot(QString newValue);
 
 
 private:
@@ -25,8 +28,6 @@ private:
 	QString wordToSearch;
 	searchMode choosenSearchMode;
 
-
-	RequestsHandler();
 	void createFileList();
 	void setCatalogPath();
 	void setWordToSearch();

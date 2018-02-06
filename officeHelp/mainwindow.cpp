@@ -1,21 +1,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-	QMainWindow(parent),
-	ui(new Ui::MainWindow),
-	mRequestsHandler(NULL) {
+MainWindow::MainWindow(QWidget *parent)
+	: QMainWindow(parent), ui(new Ui::MainWindow),
+	  mRequestsHandler(new RequestsHandler),
+	  mTextToSearch("ala"), mPath("C:/Users/Public/KatalogTestowy") {
 	ui->setupUi(this);
 
-	path = "C:/Users/Public/KatalogTestowy" ;
-	textToSearch = "ala" ;
-
-	mRequestsHandler = new RequestsHandler;
-
-	boost::signal<void ()> onPathBoxEditingFinishedSignal;
-	onPathBoxEditingFinishedSignal.connect(mRequestsHandler->setCatalogPath());
-	boost::signal<void ()> onTextToFindBoxEditingFinishedSignal;
-	onTextToFindBoxEditingFinishedSignal.connect(mRequestsHandler->setWordToSearch());
+	QObject::connect(this, SIGNAL(onPathBoxEditingFinishedSignal(QString)),
+					  mRequestsHandler, SLOT(catalogPathChangeSlot(QString)));
+	QObject::connect(this, SIGNAL(onTextToFindBoxEditingFinishedSignal(QString)),
+					  mRequestsHandler, SLOT(wordToSearchChangeSlot(QString)));
 }
 
 MainWindow::~MainWindow() {
@@ -23,9 +18,11 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::on_pathBox_editingFinished() {
-	onPathBoxEditingFinishedSignal();
+	if (ui->pathBox->text() != mPath)
+		emit onPathBoxEditingFinishedSignal(ui->pathBox->text());
 }
 
 void MainWindow::on_textToFindBox_editingFinished() {
-	onTextToFindBoxEditingFinishedSignal();
+	if (ui->textToFindBox->text() != mTextToSearch)
+		emit onTextToFindBoxEditingFinishedSignal(ui->textToFindBox->text());
 }
