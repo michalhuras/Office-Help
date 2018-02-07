@@ -25,11 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    RequestsHandler.cpp
+    RequestsHandler.cpp \
+    ServerManager.cpp
 
 HEADERS += \
         mainwindow.h \
-    RequestsHandler.h
+    RequestsHandler.h \
+    ServerManager.h
 
 FORMS += \
         mainwindow.ui

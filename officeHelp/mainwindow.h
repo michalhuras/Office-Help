@@ -5,6 +5,7 @@
 #include <QString>
 #include <QDebug>
 #include "RequestsHandler.h"
+#include "ServerManager.h"
 
 namespace Ui {
 class MainWindow;
@@ -19,10 +20,8 @@ public:
 
 private:
 	Ui::MainWindow *ui;
-	QString mPath;
-	QString mTextToSearch;
 	RequestsHandler *mRequestsHandler;
-
+	ServerManager *mServerManager;
 
 signals:
 	void onPathBoxEditingFinishedSignal(QString newValue);

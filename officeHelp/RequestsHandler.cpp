@@ -5,11 +5,11 @@ RequestsHandler::RequestsHandler() {
 }
 
 void RequestsHandler::catalogPathChangeSlot(QString newValue) {
-qDebug() << "catalog path changed";
+qDebug() << "catalog path changed:  " << newValue;
 }
 
 void RequestsHandler::wordToSearchChangeSlot(QString newValue) {
-qDebug() << "word to search changed";
+qDebug() << "word to search changed:  " << newValue;
 }
 
 

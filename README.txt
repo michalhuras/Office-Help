@@ -8,7 +8,6 @@ It will be used to search in filles and catalogs for some phrases, show and edit
 Also in future I hope to add feature that deletes white spaces from ends of documents lines.
 
 
-I am trying to apply OBSERVER design pattern. I do not know, if am I am doing it right. 
-I will be thankful for all suggestions.
+I used Qt signals and slots. Link to documantation page:
+http://doc.qt.io/archives/qt-4.8/signalsandslots.html
 
-What is i aplied ITERATOR design pattern. 
