@@ -29,9 +29,10 @@ SOURCES += \
     ServerManager.cpp
 
 HEADERS += \
-        mainwindow.h \
-    RequestsHandler.h \
-    ServerManager.h
+    mainwindow.hpp \
+    RequestsHandler.hpp \
+    ServerManager.hpp \
+    datastructevidence.hpp
 
 FORMS += \
         mainwindow.ui

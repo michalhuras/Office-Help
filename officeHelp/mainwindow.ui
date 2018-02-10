@@ -25,6 +25,13 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
+      <widget class="QRadioButton" name="radioButton">
+       <property name="text">
+        <string>search in file</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QRadioButton" name="radioButton_2">
        <property name="text">
         <string>Search in catalog</string>
@@ -35,13 +42,6 @@
       <widget class="QRadioButton" name="radioButton_3">
        <property name="text">
         <string>Search in catalog recursively</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="radioButton">
-       <property name="text">
-        <string>search in file</string>
        </property>
       </widget>
      </item>
