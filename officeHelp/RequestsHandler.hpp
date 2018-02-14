@@ -6,24 +6,33 @@
 #include <QDebug>
 #include <QObject>
 
+#include <datastructevidence.hpp>
+#include <ServerManager.hpp>
+
 class RequestsHandler :public QObject {
 	Q_OBJECT
 
 public:
-	RequestsHandler();
+	RequestsHandler(ServerManager *aServerManager);
 
 public slots:
 	void catalogPathChangeSlot(QString newValue);
 	void wordToSearchChangeSlot(QString newValue);
+	void searchButtonClicked();
+
 
 private:
-	QVector<QString> listOfFiles;
-	QString catalogPath;
-	QString wordToSearch;
+	void searchInFile();
+	ServerManager *mServerManager;
 
-	void createFileList();
-	void setCatalogPath();
-	void setWordToSearch();
+	//QVector<QString> listOfFiles;
+	//QString catalogPath;
+	//QString wordToSearch;
+
+	//void createFileList();
+	//void setCatalogPath();
+	//void setWordToSearch();
+	//void searchingInFile();
 
 
 

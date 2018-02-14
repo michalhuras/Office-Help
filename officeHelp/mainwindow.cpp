@@ -4,15 +4,18 @@
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-	: QMainWindow(parent), ui(new Ui::MainWindow),
-	  mRequestsHandler(new RequestsHandler),
-	  mServerManager(new ServerManager) {
+	: QMainWindow(parent),
+	  ui(new Ui::MainWindow),
+	  mServerManager(new ServerManager),
+	  mRequestsHandler(new RequestsHandler(mServerManager)) {
 	ui->setupUi(this);
 
 	QObject::connect(this, SIGNAL(onPathBoxEditingFinishedSignal(QString)),
 					  mRequestsHandler, SLOT(catalogPathChangeSlot(QString)));
 	QObject::connect(this, SIGNAL(onTextToFindBoxEditingFinishedSignal(QString)),
 					  mRequestsHandler, SLOT(wordToSearchChangeSlot(QString)));
+	QObject::connect(this, SIGNAL(searchButtonClicked()),
+					  mRequestsHandler, SLOT(searchButtonClicked()));
 	QObject::connect(this, SIGNAL(onPathBoxEditingFinishedSignal(QString)),
 					  mServerManager, SLOT(setPath(QString)));
 	QObject::connect(this, SIGNAL(onTextToFindBoxEditingFinishedSignal(QString)),
@@ -23,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
 					  mServerManager, SLOT(setSearchMode(CUS::searchMode)));
 	QObject::connect(this, SIGNAL(button3Clicked(CUS::searchMode)),
 					  mServerManager, SLOT(setSearchMode(CUS::searchMode)));
+
 
 	ui->pathBox->setText(mServerManager->getPath());
 	ui->textToFindBox->setText(mServerManager->getTextToSearch());
@@ -58,6 +62,12 @@ void MainWindow::on_radioButton_3_clicked() {
 
 void MainWindow::on_pushButton_4_clicked()
 {
+	//TO DO !!! ŻEBY MOŻNA BYŁO SOBIE WYBIERAĆ INTERESUJĄCE NAS PLIKI
 	QString fileName = QFileDialog::getOpenFileName(this,
 		tr("Open Image"), "C:/Users/Public", tr("Image Files (*.png *.jpg *.bmp *.txt)"));
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+	emit searchButtonClicked();
 }

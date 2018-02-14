@@ -5,7 +5,7 @@
 ServerManager::ServerManager() :
 		mPath("C:/TestingCatalog/DokumentTekstowy1.txt"),
 		mTextToSearch("ala"),
-		mSearchMode(CUS::inThisCatalog) {
+		mSearchMode(CUS::inThisFile) {
 }
 
 QString ServerManager::getPath() {

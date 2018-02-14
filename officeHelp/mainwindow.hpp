@@ -22,8 +22,8 @@ public:
 
 private:
 	Ui::MainWindow *ui;
-	RequestsHandler *mRequestsHandler;
 	ServerManager *mServerManager;
+	RequestsHandler *mRequestsHandler;
 
 signals:
 	void onPathBoxEditingFinishedSignal(QString newValue);
@@ -31,6 +31,7 @@ signals:
 	void button1Clicked(CUS::searchMode chosenMode);
 	void button2Clicked(CUS::searchMode chosenMode);
 	void button3Clicked(CUS::searchMode chosenMode);
+	void searchButtonClicked();
 
 private slots:
 	void on_pathBox_editingFinished();
@@ -39,6 +40,7 @@ private slots:
 	void on_radioButton_2_clicked();
 	void on_radioButton_3_clicked();
 	void on_pushButton_4_clicked();
+	void on_pushButton_2_clicked();
 };
 
 #endif // MAINWINDOW_H
