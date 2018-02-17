@@ -1,7 +1,9 @@
 #include "RequestsHandler.hpp"
 
 #include <QFile>
+#include <QDir>
 #include <QVector>
+#include <QString>
 
 RequestsHandler::RequestsHandler(ServerManager *aServerManager):
 		mServerManager(aServerManager) {;}
@@ -15,8 +17,6 @@ void RequestsHandler::wordToSearchChangeSlot(QString newValue) {
 }
 
 void RequestsHandler::searchButtonClicked() {
-	qDebug() << "0. Jestem tu";
-
 	switch (mServerManager->getSearchMode()) {
 	case CUS::error:
 		break;
@@ -25,7 +25,6 @@ void RequestsHandler::searchButtonClicked() {
 	case CUS::inThisCatalogRecursevely:
 		break;
 	case CUS::inThisFile:
-		qDebug() << "1. Jestem tu";
 		searchInFile();
 		break;
 	default:
@@ -33,36 +32,53 @@ void RequestsHandler::searchButtonClicked() {
 	}
 }
 
-void RequestsHandler::searchInFile() {
-	//I dont know if export it to other class
-	//open file
+void RequestsHandler::showFilesInDirectoryButtonClicked() {
+	//Check if path is to file
+	//QFile file(mServerManager->getPath());
+	//if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	//	return vRetrievalResult;
 
+	//Create file list
+	QDir pathDir = QDir(mServerManager->getPath());
+	QStringList filesList;
+	filesList = pathDir.entryList(QStringList("*"), QDir::Files | QDir::NoSymLinks);
+	emit showFilesInDirectory(filesList);
+}
+
+void RequestsHandler::searchInFile() {
+	QVector <QPair<QVariant, QString> > vRetrievalResult = readFileLines();
+
+	//Process received data
+	int foundLines = 0;
+	while(foundLines != vRetrievalResult.size()) {
+		if ( vRetrievalResult.at(foundLines).second.contains(
+				 mServerManager->getTextToSearch(), Qt::CaseInsensitive))
+			foundLines++;
+		else
+			vRetrievalResult.erase(vRetrievalResult.begin() + foundLines);
+	}
+
+	emit showSearchInFileResults(vRetrievalResult);
+}
+
+QVector <QPair<QVariant, QString> > RequestsHandler::readFileLines() {
+	QVector <QPair<QVariant, QString> > vRetrievalResult;
+
+	//Open file
 	QFile file(mServerManager->getPath());
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-		return;
+		return vRetrievalResult;
 
-	struct retrievalResult{
-		int line;
-		QString lineText;
-	};
-
-	QVector <retrievalResult> vRetrievalResult;
-
+	//Read lines from file and save to QVector
 	int lineNumber = 0;
-
 	QTextStream in(&file);
 	while (!in.atEnd()) {
 		lineNumber++;
-		QString line = in.readLine();
-		if (line.contains(mServerManager->getTextToSearch(), Qt::CaseInsensitive))
-			vRetrievalResult.push_back(retrievalResult(lineNumber,line));
+		QString lineText = in.readLine();
+		vRetrievalResult.push_back(QPair<QVariant , QString >(lineNumber,lineText));
 	}
-
-	while(!vRetrievalResult.isEmpty()) {
-		qDebug << vRetrievalResult.at(0).lineText;
-		vRetrievalResult.erase(vRetrievalResult.begin());
-	}
-
+	return vRetrievalResult;
 }
+
 
 

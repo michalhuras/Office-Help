@@ -3,7 +3,9 @@
 
 #include <QMainWindow>
 #include <QString>
-#include <QDebug>
+#include <QStringList>
+#include <QDebug> //TO DO
+#include <QVariant>
 
 #include "datastructevidence.hpp"
 #include "RequestsHandler.hpp"
@@ -31,16 +33,22 @@ signals:
 	void button1Clicked(CUS::searchMode chosenMode);
 	void button2Clicked(CUS::searchMode chosenMode);
 	void button3Clicked(CUS::searchMode chosenMode);
+
 	void searchButtonClicked();
+	void showFilesInDirectoryButtonClicked();
+
 
 private slots:
+	void showSearchInFileResults(QVector <QPair<QVariant, QString> > searchResults);
+	void showFilesInDirectory(QStringList filesList);
+
 	void on_pathBox_editingFinished();
 	void on_textToFindBox_editingFinished();
-	void on_radioButton_clicked();
-	void on_radioButton_2_clicked();
-	void on_radioButton_3_clicked();
 	void on_pushButton_4_clicked();
 	void on_pushButton_2_clicked();
+	void on_tabWidget_currentChanged(int index);
+	void on_pushButton_3_clicked();
+	void on_pushButton_5_clicked();
 };
 
 #endif // MAINWINDOW_H

@@ -3,8 +3,10 @@
 
 #include <QVector>
 #include <QString>
-#include <QDebug>
+#include <QDebug> // TO DO
 #include <QObject>
+#include <QPair>
+#include <QVariant>
 
 #include <datastructevidence.hpp>
 #include <ServerManager.hpp>
@@ -15,20 +17,28 @@ class RequestsHandler :public QObject {
 public:
 	RequestsHandler(ServerManager *aServerManager);
 
+signals:
+	void showSearchInFileResults(QVector <QPair<QVariant, QString> >);
+	void showFilesInDirectory(QStringList);
+
 public slots:
 	void catalogPathChangeSlot(QString newValue);
 	void wordToSearchChangeSlot(QString newValue);
 	void searchButtonClicked();
+	void showFilesInDirectoryButtonClicked();
 
 
 private:
-	void searchInFile();
 	ServerManager *mServerManager;
+
+	void searchInFile();
+	QVector <QPair<QVariant, QString> > readFileLines();
+
+
 
 	//QVector<QString> listOfFiles;
 	//QString catalogPath;
 	//QString wordToSearch;
-
 	//void createFileList();
 	//void setCatalogPath();
 	//void setWordToSearch();
