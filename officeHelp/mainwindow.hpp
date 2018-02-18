@@ -36,19 +36,23 @@ signals:
 
 	void searchButtonClicked();
 	void showFilesInDirectoryButtonClicked();
+	void showFilesInDirectoryRecursivelyButtonClicked();
 
 
 private slots:
-	void showSearchInFileResults(QVector <QPair<QVariant, QString> > searchResults);
-	void showFilesInDirectory(QStringList filesList);
+	void displaySearchInFileResults(QVector <QPair<QVariant, QString> > searchResults);
+	void displayFilesInDirectory();
+	void displayFilesInDirectoryRecursively();
 
 	void on_pathBox_editingFinished();
 	void on_textToFindBox_editingFinished();
 	void on_pushButton_4_clicked();
-	void on_pushButton_2_clicked();
+	void on_pushButton_7_clicked();
 	void on_tabWidget_currentChanged(int index);
 	void on_pushButton_3_clicked();
 	void on_pushButton_5_clicked();
+	void on_pushButton_6_clicked();
+	void on_pushButton_8_clicked();
 };
 
 #endif // MAINWINDOW_H

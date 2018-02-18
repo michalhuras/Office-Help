@@ -4,6 +4,7 @@
 #include <QDir>
 #include <QVector>
 #include <QString>
+#include <QFileInfo>
 
 RequestsHandler::RequestsHandler(ServerManager *aServerManager):
 		mServerManager(aServerManager) {;}
@@ -33,16 +34,33 @@ void RequestsHandler::searchButtonClicked() {
 }
 
 void RequestsHandler::showFilesInDirectoryButtonClicked() {
-	//Check if path is to file
-	//QFile file(mServerManager->getPath());
-	//if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-	//	return vRetrievalResult;
+	QString catalogPath = mServerManager->getPath();
+
+	//Check if path is to file or Catalog
+	QFileInfo fileInformations(catalogPath);
+	catalogPath = fileInformations.path();
 
 	//Create file list
-	QDir pathDir = QDir(mServerManager->getPath());
+	QDir pathDir = QDir(catalogPath);
 	QStringList filesList;
-	filesList = pathDir.entryList(QStringList("*"), QDir::Files | QDir::NoSymLinks);
-	emit showFilesInDirectory(filesList);
+	filesList = pathDir.entryList(QStringList("*"), QDir::Files | QDir::NoSymLinks,
+								  QDir::Name);
+	qDebug() << filesList;
+	emit displayFilesInDirectory(filesList);
+}
+
+void RequestsHandler::showFilesInDirectoryRecursivelyButtonClicked() { //TO Do za długa nazwa
+	QString catalogPath = mServerManager->getPath();
+	QStringList filesList;
+	QStringList *mFilesList = &filesList;
+
+	//Check if path is to file or Catalog
+	QFileInfo fileInformations(catalogPath);
+	catalogPath = fileInformations.path();
+
+	//Create file list recursively
+	createFileListRecursively(catalogPath, mFilesList,"");
+	emit displayFilesInDirectoryRecursively(filesList); //TO DO czy to jest najlepsza opcja przekazywania -wskaźnik
 }
 
 void RequestsHandler::searchInFile() {
@@ -58,7 +76,7 @@ void RequestsHandler::searchInFile() {
 			vRetrievalResult.erase(vRetrievalResult.begin() + foundLines);
 	}
 
-	emit showSearchInFileResults(vRetrievalResult);
+	emit displaySearchInFileResults(vRetrievalResult);
 }
 
 QVector <QPair<QVariant, QString> > RequestsHandler::readFileLines() {
@@ -66,8 +84,10 @@ QVector <QPair<QVariant, QString> > RequestsHandler::readFileLines() {
 
 	//Open file
 	QFile file(mServerManager->getPath());
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		file.close();
 		return vRetrievalResult;
+	}
 
 	//Read lines from file and save to QVector
 	int lineNumber = 0;
@@ -78,6 +98,35 @@ QVector <QPair<QVariant, QString> > RequestsHandler::readFileLines() {
 		vRetrievalResult.push_back(QPair<QVariant , QString >(lineNumber,lineText));
 	}
 	return vRetrievalResult;
+}
+
+void RequestsHandler::createFileListRecursively(QString path, QStringList *mList,
+												QString prefix) { //TO DO nazewnictowo -ujednolicić przedrostki (mList)
+	QDir dirForFiles = QDir(path);
+	QStringList filesList;
+	filesList = dirForFiles.entryList(QStringList("*"), QDir::Files | QDir::NoSymLinks,
+									  QDir::Name);
+
+	QString fileToAdd;
+	while (!filesList.isEmpty()) {
+		if (prefix == "")
+			fileToAdd = prefix;
+		else
+			fileToAdd = prefix + "/";
+		mList->append(prefix + filesList.first());
+		filesList.erase(filesList.begin());
+	}
+
+	QDir dirForCatalogs = QDir(path);
+	QStringList catalogList;
+	catalogList = dirForCatalogs.entryList(QStringList("*"),
+										   QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+
+	while (!catalogList.isEmpty()) {
+		createFileListRecursively(path + "/" + catalogList.first(), mList,
+								  prefix + "/" + catalogList.first());
+		catalogList.erase(catalogList.begin());
+	}
 }
 
 

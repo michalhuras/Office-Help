@@ -3,6 +3,7 @@
 
 #include <QVector>
 #include <QString>
+#include <QStringList>
 #include <QDebug> // TO DO
 #include <QObject>
 #include <QPair>
@@ -18,23 +19,23 @@ public:
 	RequestsHandler(ServerManager *aServerManager);
 
 signals:
-	void showSearchInFileResults(QVector <QPair<QVariant, QString> >);
-	void showFilesInDirectory(QStringList);
+	void displaySearchInFileResults(QVector <QPair<QVariant, QString> >);
+	void displayFilesInDirectory(QStringList);
+	void displayFilesInDirectoryRecursively(QStringList);
 
 public slots:
 	void catalogPathChangeSlot(QString newValue);
 	void wordToSearchChangeSlot(QString newValue);
 	void searchButtonClicked();
 	void showFilesInDirectoryButtonClicked();
-
+	void showFilesInDirectoryRecursivelyButtonClicked(); // TO DO -za długa nazwa
 
 private:
 	ServerManager *mServerManager;
 
 	void searchInFile();
 	QVector <QPair<QVariant, QString> > readFileLines();
-
-
+	void createFileListRecursively(QString CatalogPath, QStringList *mList, QString prefix = "");
 
 	//QVector<QString> listOfFiles;
 	//QString catalogPath;
@@ -43,9 +44,9 @@ private:
 	//void setCatalogPath();
 	//void setWordToSearch();
 	//void searchingInFile();
-
-
-
 };
 
 #endif // REUESTSHANDLER_H
+
+
+//TO DO -usunąć zbędne komentarze z plików cpp

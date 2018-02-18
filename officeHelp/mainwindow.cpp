@@ -13,12 +13,13 @@ MainWindow::MainWindow(QWidget *parent)
 	  mRequestsHandler(new RequestsHandler(mServerManager)) {
 	ui->setupUi(this);
 
+	// TO DO wyeksportować to do osobnej metody void setTablesSettings();
 	QStringList labelsList1;
 	labelsList1.append("Line \nnumber");
 	labelsList1.append("Line text");
 
 	QStringList labelsList2;
-	labelsList2.append("# Number");
+	labelsList2.append("Number");
 	labelsList2.append("File name");
 
 	ui->tableWidget->setColumnCount(2);
@@ -37,31 +38,45 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->tableWidget_2->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->tableWidget_2->setHorizontalHeaderLabels(labelsList2);
 
+	ui->tableWidget_3->setColumnCount(2);
+	ui->tableWidget_3->setRowCount(1);
+	ui->tableWidget_3->setColumnWidth(0,69);
+	ui->tableWidget_3->setColumnWidth(1,500);
+	ui->tableWidget_3->verticalHeader()->setVisible(false);
+	ui->tableWidget_3->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	ui->tableWidget_3->setHorizontalHeaderLabels(labelsList2);
 
+	//TO DO styl łamania jeden ustalić i ujednolić
+	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectory(QStringList)),
+					 mServerManager, SLOT(setfilesInDirectory(QStringList)));
+	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectoryRecursively(QStringList)),
+					 mServerManager, SLOT(setfilesInDirectoryRecursively(QStringList)));
 	QObject::connect(this, SIGNAL(onPathBoxEditingFinishedSignal(QString)),
-					  mRequestsHandler, SLOT(catalogPathChangeSlot(QString)));
+					 mServerManager, SLOT(setPath(QString)));
 	QObject::connect(this, SIGNAL(onTextToFindBoxEditingFinishedSignal(QString)),
-					  mRequestsHandler, SLOT(wordToSearchChangeSlot(QString)));
-	QObject::connect(this, SIGNAL(searchButtonClicked()),
-					  mRequestsHandler, SLOT(searchButtonClicked()));
-	QObject::connect(this, SIGNAL(showFilesInDirectoryButtonClicked()),
-					  mRequestsHandler, SLOT(showFilesInDirectoryButtonClicked()));
-	QObject::connect(mRequestsHandler, SIGNAL(
-						 showSearchInFileResults(QVector <QPair<QVariant, QString> >)),
-					 this, SLOT(showSearchInFileResults(
-									QVector <QPair<QVariant, QString> >)));
-	QObject::connect(mRequestsHandler, SIGNAL(showFilesInDirectory(QStringList)),
-					 this, SLOT(showFilesInDirectory(QStringList)));
-	QObject::connect(this, SIGNAL(onPathBoxEditingFinishedSignal(QString)),
-					  mServerManager, SLOT(setPath(QString)));
-	QObject::connect(this, SIGNAL(onTextToFindBoxEditingFinishedSignal(QString)),
-					  mServerManager, SLOT(setTextToSearch(QString)));
+					 mServerManager, SLOT(setTextToSearch(QString)));
 	QObject::connect(this, SIGNAL(button1Clicked(CUS::searchMode)),
-					  mServerManager, SLOT(setSearchMode(CUS::searchMode)));
+					 mServerManager, SLOT(setSearchMode(CUS::searchMode)));
 	QObject::connect(this, SIGNAL(button2Clicked(CUS::searchMode)),
-					  mServerManager, SLOT(setSearchMode(CUS::searchMode)));
+					 mServerManager, SLOT(setSearchMode(CUS::searchMode)));
 	QObject::connect(this, SIGNAL(button3Clicked(CUS::searchMode)),
-					  mServerManager, SLOT(setSearchMode(CUS::searchMode)));
+					 mServerManager, SLOT(setSearchMode(CUS::searchMode)));
+	QObject::connect(this, SIGNAL(onPathBoxEditingFinishedSignal(QString)),
+					 mRequestsHandler, SLOT(catalogPathChangeSlot(QString)));
+	QObject::connect(this, SIGNAL(onTextToFindBoxEditingFinishedSignal(QString)),
+					 mRequestsHandler, SLOT(wordToSearchChangeSlot(QString)));
+	QObject::connect(this, SIGNAL(searchButtonClicked()),
+					 mRequestsHandler, SLOT(searchButtonClicked()));
+	QObject::connect(this, SIGNAL(showFilesInDirectoryButtonClicked()),
+					 mRequestsHandler, SLOT(showFilesInDirectoryButtonClicked()));
+	QObject::connect(this, SIGNAL(showFilesInDirectoryRecursivelyButtonClicked()),
+					 mRequestsHandler, SLOT( showFilesInDirectoryRecursivelyButtonClicked()));
+	QObject::connect(mRequestsHandler, SIGNAL( displaySearchInFileResults(QVector <QPair<QVariant, QString> >)),
+					 this, SLOT(displaySearchInFileResults( QVector <QPair<QVariant, QString> >)));
+	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectory(QStringList)),
+					 this, SLOT(displayFilesInDirectory()));
+	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectoryRecursively(QStringList)),
+					 this, SLOT(displayFilesInDirectoryRecursively()));
 
 	ui->pathBox->setText(mServerManager->getPath());
 	ui->textToFindBox->setText(mServerManager->getTextToSearch());
@@ -71,7 +86,7 @@ MainWindow::~MainWindow() {
 	delete ui;
 }
 
-void MainWindow::showSearchInFileResults(QVector <QPair<QVariant, QString> > searchResults) {
+void MainWindow::displaySearchInFileResults(QVector <QPair<QVariant, QString> > searchResults) {
 	ui->tableWidget->setRowCount(searchResults.size());
 	int rowNumber = 0;
 	while (!searchResults.isEmpty()){
@@ -84,7 +99,8 @@ void MainWindow::showSearchInFileResults(QVector <QPair<QVariant, QString> > sea
 	}
 }
 
-void MainWindow::showFilesInDirectory(QStringList filesList) {
+void MainWindow::displayFilesInDirectory() {
+	QStringList filesList = mServerManager->getFilesInDirectory();
 	ui->tableWidget_2->setRowCount(filesList.size());
 	QVariant rowNumber = 0;
 	while (!filesList.isEmpty()){
@@ -94,6 +110,21 @@ void MainWindow::showFilesInDirectory(QStringList filesList) {
 									   filesList.first()));
 		rowNumber = rowNumber.toInt() + 1;
 		filesList.erase(filesList.begin());
+	}
+}
+
+void MainWindow::displayFilesInDirectoryRecursively(){
+	QStringList tempFilesList = mServerManager->getFilesInDirectoryRecursively();
+	QStringList *mFilesList = &tempFilesList;
+	ui->tableWidget_3->setRowCount(mFilesList->size());
+	QVariant rowNumber = 0;
+	while (!mFilesList->isEmpty()){
+		ui->tableWidget_3->setItem(rowNumber.toInt(),0,new QTableWidgetItem(
+									   rowNumber.toString()));
+		ui->tableWidget_3->setItem(rowNumber.toInt(),1,new QTableWidgetItem(
+									   mFilesList->first()));
+		rowNumber = rowNumber.toInt() + 1;
+		mFilesList->erase(mFilesList->begin());
 	}
 }
 
@@ -115,7 +146,7 @@ void MainWindow::on_pushButton_4_clicked()
 		tr("Open Image"), "C:/Users/Public", tr("Image Files (*.png *.jpg *.bmp *.txt)"));
 }
 
-void MainWindow::on_pushButton_2_clicked()
+void MainWindow::on_pushButton_7_clicked()
 {
 	emit searchButtonClicked();
 }
@@ -147,4 +178,14 @@ void MainWindow::on_pushButton_3_clicked()
 void MainWindow::on_pushButton_5_clicked()
 {
 	emit showFilesInDirectoryButtonClicked();
+}
+
+void MainWindow::on_pushButton_6_clicked()
+{
+	emit showFilesInDirectoryRecursivelyButtonClicked();
+}
+
+void MainWindow::on_pushButton_8_clicked()
+{
+	//SearchInListedFilesButtonClicked
 }
