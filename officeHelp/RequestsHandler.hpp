@@ -1,5 +1,5 @@
-#ifndef REUESTSHANDLER_H
-#define REUESTSHANDLER_H
+#ifndef REQUESTSHANDLER_H
+#define REQUESTSHANDLER_H
 
 #include <QVector>
 #include <QString>
@@ -22,6 +22,7 @@ signals:
 	void displaySearchInFileResults(QVector <QPair<QVariant, QString> >);
 	void displayFilesInDirectory(QStringList);
 	void displayFilesInDirectoryRecursively(QStringList);
+	void displayFilesAndResultsInDirectory(QVector<CUS::searchReult>);
 
 public slots:
 	void catalogPathChangeSlot(QString newValue);
@@ -29,6 +30,7 @@ public slots:
 	void searchButtonClicked();
 	void showFilesInDirectoryButtonClicked();
 	void showFilesInDirectoryRecursivelyButtonClicked(); // TO DO -za długa nazwa
+	void searchInListedFilesButton2Clicked();
 
 private:
 	ServerManager *mServerManager;
@@ -37,16 +39,8 @@ private:
 	QVector <QPair<QVariant, QString> > readFileLines();
 	void createFileListRecursively(QString CatalogPath, QStringList *mList, QString prefix = "");
 
-	//QVector<QString> listOfFiles;
-	//QString catalogPath;
-	//QString wordToSearch;
-	//void createFileList();
-	//void setCatalogPath();
-	//void setWordToSearch();
-	//void searchingInFile();
 };
 
-#endif // REUESTSHANDLER_H
-
+#endif // REQUESTSHANDLER_H
 
 //TO DO -usunąć zbędne komentarze z plików cpp

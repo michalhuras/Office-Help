@@ -17,6 +17,7 @@ public:
 	CUS::searchMode getSearchMode();
 	QStringList getFilesInDirectory();
 	QStringList getFilesInDirectoryRecursively();
+	QVector<CUS::searchReult> getSearchResultInFile();
 
 
 public slots:
@@ -25,6 +26,7 @@ public slots:
 	void setSearchMode(CUS::searchMode aSearchMode);
 	void setfilesInDirectory(QStringList filesInDirectory);
 	void setfilesInDirectoryRecursively(QStringList filesInDirectoryRecursively);
+	void setFilesAndResultsInDirectory(QVector<CUS::searchReult> SearchResultInFile);
 
 
 protected:
@@ -33,6 +35,7 @@ protected:
 	CUS::searchMode mSearchMode;
 	QStringList mFilesInDirectory;
 	QStringList mFilesInDirectoryRecursively;
+	QVector<CUS::searchReult> mSearchResultInFile;
 };
 
 #endif // SERVERMENAGER_H

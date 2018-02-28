@@ -13,16 +13,29 @@ MainWindow::MainWindow(QWidget *parent)
 	  mRequestsHandler(new RequestsHandler(mServerManager)) {
 	ui->setupUi(this);
 
-	// TO DO wyeksportować to do osobnej metody void setTablesSettings();
+	setTablesStartingParameters();
+	setSignalsAndSlotsConnections();
+
+	ui->pathBox->setText(mServerManager->getPath());
+	ui->textToFindBox->setText(mServerManager->getTextToSearch());
+}
+
+MainWindow::~MainWindow() {
+	delete ui;
+}
+
+void MainWindow::setTablesStartingParameters(){
 	QStringList labelsList1;
 	labelsList1.append("Line \nnumber");
 	labelsList1.append("Line text");
 
 	QStringList labelsList2;
 	labelsList2.append("Number");
-	labelsList2.append("File name");
+	labelsList2.append("File\nname");
+	labelsList2.append("Number\nof resuts");
+	labelsList2.append("Text");
 
-	ui->tableWidget->setColumnCount(2);
+	ui->tableWidget->setColumnCount(4);
 	ui->tableWidget->setRowCount(1);
 	ui->tableWidget->setColumnWidth(0,69);
 	ui->tableWidget->setColumnWidth(1,500);
@@ -30,27 +43,38 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->tableWidget->setHorizontalHeaderLabels(labelsList1);
 
-	ui->tableWidget_2->setColumnCount(2);
+	ui->tableWidget_2->setColumnCount(4);
 	ui->tableWidget_2->setRowCount(1);
 	ui->tableWidget_2->setColumnWidth(0,69);
-	ui->tableWidget_2->setColumnWidth(1,500);
+	ui->tableWidget_2->setColumnWidth(1,131);
+	ui->tableWidget_2->setColumnWidth(2,69);
+	ui->tableWidget_2->setColumnWidth(3,300);
 	ui->tableWidget_2->verticalHeader()->setVisible(false);
 	ui->tableWidget_2->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->tableWidget_2->setHorizontalHeaderLabels(labelsList2);
 
-	ui->tableWidget_3->setColumnCount(2);
+	ui->tableWidget_3->setColumnCount(4);
 	ui->tableWidget_3->setRowCount(1);
 	ui->tableWidget_3->setColumnWidth(0,69);
-	ui->tableWidget_3->setColumnWidth(1,500);
+	ui->tableWidget_3->setColumnWidth(1,131);
+	ui->tableWidget_3->setColumnWidth(2,69);
+	ui->tableWidget_3->setColumnWidth(3,300);
 	ui->tableWidget_3->verticalHeader()->setVisible(false);
 	ui->tableWidget_3->setEditTriggers(QAbstractItemView::NoEditTriggers);
-	ui->tableWidget_3->setHorizontalHeaderLabels(labelsList2);
+}
 
+void MainWindow::setSignalsAndSlotsConnections() {
 	//TO DO styl łamania jeden ustalić i ujednolić
+
+	//mServerManager - mRequestsHandler
 	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectory(QStringList)),
 					 mServerManager, SLOT(setfilesInDirectory(QStringList)));
 	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectoryRecursively(QStringList)),
 					 mServerManager, SLOT(setfilesInDirectoryRecursively(QStringList)));
+	QObject::connect(mRequestsHandler, SIGNAL(displayFilesAndResultsInDirectory(QVector<CUS::searchReult>)),
+					 mServerManager, SLOT(setFilesAndResultsInDirectory(QVector<CUS::searchReult>)));
+
+	//mServerManager
 	QObject::connect(this, SIGNAL(onPathBoxEditingFinishedSignal(QString)),
 					 mServerManager, SLOT(setPath(QString)));
 	QObject::connect(this, SIGNAL(onTextToFindBoxEditingFinishedSignal(QString)),
@@ -61,6 +85,8 @@ MainWindow::MainWindow(QWidget *parent)
 					 mServerManager, SLOT(setSearchMode(CUS::searchMode)));
 	QObject::connect(this, SIGNAL(button3Clicked(CUS::searchMode)),
 					 mServerManager, SLOT(setSearchMode(CUS::searchMode)));
+
+	//mRequestsHandler
 	QObject::connect(this, SIGNAL(onPathBoxEditingFinishedSignal(QString)),
 					 mRequestsHandler, SLOT(catalogPathChangeSlot(QString)));
 	QObject::connect(this, SIGNAL(onTextToFindBoxEditingFinishedSignal(QString)),
@@ -71,19 +97,16 @@ MainWindow::MainWindow(QWidget *parent)
 					 mRequestsHandler, SLOT(showFilesInDirectoryButtonClicked()));
 	QObject::connect(this, SIGNAL(showFilesInDirectoryRecursivelyButtonClicked()),
 					 mRequestsHandler, SLOT( showFilesInDirectoryRecursivelyButtonClicked()));
+	QObject::connect(this, SIGNAL(searchInListedFilesButton2Clicked()),
+					 mRequestsHandler, SLOT(searchInListedFilesButton2Clicked()));
 	QObject::connect(mRequestsHandler, SIGNAL( displaySearchInFileResults(QVector <QPair<QVariant, QString> >)),
 					 this, SLOT(displaySearchInFileResults( QVector <QPair<QVariant, QString> >)));
 	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectory(QStringList)),
 					 this, SLOT(displayFilesInDirectory()));
 	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectoryRecursively(QStringList)),
 					 this, SLOT(displayFilesInDirectoryRecursively()));
-
-	ui->pathBox->setText(mServerManager->getPath());
-	ui->textToFindBox->setText(mServerManager->getTextToSearch());
-}
-
-MainWindow::~MainWindow() {
-	delete ui;
+	QObject::connect(this, SIGNAL(displayFilesAndResultsInDirectory(QVector<CUS::searchReult>)),
+					 mRequestsHandler, SLOT(displayFilesAndResultsInDirectory()));
 }
 
 void MainWindow::displaySearchInFileResults(QVector <QPair<QVariant, QString> > searchResults) {
@@ -128,6 +151,12 @@ void MainWindow::displayFilesInDirectoryRecursively(){
 	}
 }
 
+void MainWindow::displayFilesAndResultsInDirectory() {
+
+qDebug() << "Jestem tu... ";
+
+}
+
 void MainWindow::on_pathBox_editingFinished() {
 	emit onPathBoxEditingFinishedSignal(ui->pathBox->text());
 }
@@ -142,8 +171,25 @@ void MainWindow::on_textToFindBox_editingFinished() {
 void MainWindow::on_pushButton_4_clicked()
 {
 	//TO DO !!! ŻEBY MOŻNA BYŁO SOBIE WYBIERAĆ INTERESUJĄCE NAS PLIKI
-	QString fileName = QFileDialog::getOpenFileName(this,
-		tr("Open Image"), "C:/Users/Public", tr("Image Files (*.png *.jpg *.bmp *.txt)"));
+	QFileDialog dialog(this);
+	//dialog.setFileMode(QFileDialog::Directory );
+	dialog.setOption(QFileDialog::ShowDirsOnly,false);
+	QStringList filters;
+	//filters << "Image files (*.png *.xpm *.jpg)"
+	//		<< "Text files (*.txt)"
+	//		<< "Any files (*)";
+	//dialog.setNameFilters(filters);
+	dialog.setFilter(QDir::AllDirs | QDir::Files);
+	//dialog.setFileMode(QFileDialog::ExistingFile );
+	dialog.setDirectory("C:/TestingCatalog/");
+	dialog.setViewMode(QFileDialog::Detail);
+	dialog.exec();
+	QDir fileNames = dialog.directory();
+	qDebug() << fileNames.absolutePath() << "    " << fileNames.dirName();
+
+	//C:\TestingCatalog
+	//QString fileName = QFileDialog::getOpenFileName(this,
+	//	tr("Open file"), "C:/Users/Public", tr("Image Files (*.png *.jpg *.bmp *.txt)"));
 }
 
 void MainWindow::on_pushButton_7_clicked()
@@ -187,5 +233,15 @@ void MainWindow::on_pushButton_6_clicked()
 
 void MainWindow::on_pushButton_8_clicked()
 {
-	//SearchInListedFilesButtonClicked
+	emit searchInListedFilesButton1Clicked();
+}
+
+void MainWindow::on_pushButton_10_clicked()
+{
+	emit searchInListedFilesButton2Clicked();
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+
 }

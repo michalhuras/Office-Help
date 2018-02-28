@@ -28,6 +28,10 @@ QStringList ServerManager::getFilesInDirectoryRecursively() {
 	return mFilesInDirectoryRecursively;
 }
 
+QVector<CUS::searchReult> ServerManager::getSearchResultInFile() {
+	return mSearchResultInFile;
+}
+
 void ServerManager::setPath(QString aPath) {
 	if (mPath != aPath)
 		mPath = aPath;
@@ -49,6 +53,11 @@ void ServerManager::setfilesInDirectory(QStringList filesInDirectory) {
 
 void ServerManager::setfilesInDirectoryRecursively(QStringList filesInDirectoryRecursively) {
 	mFilesInDirectoryRecursively = filesInDirectoryRecursively;
+}
+
+
+void ServerManager::setFilesAndResultsInDirectory(QVector<CUS::searchReult> SearchResultInFile) {
+	mSearchResultInFile = SearchResultInFile;
 }
 
 
