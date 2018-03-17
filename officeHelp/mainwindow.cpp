@@ -105,8 +105,8 @@ void MainWindow::setSignalsAndSlotsConnections() {
 					 this, SLOT(displayFilesInDirectory()));
 	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectoryRecursively(QStringList)),
 					 this, SLOT(displayFilesInDirectoryRecursively()));
-	QObject::connect(this, SIGNAL(displayFilesAndResultsInDirectory(QVector<CUS::searchReult>)),
-					 mRequestsHandler, SLOT(displayFilesAndResultsInDirectory()));
+	QObject::connect(mRequestsHandler, SIGNAL(displayFilesAndResultsInDirectory(QVector<CUS::searchReult>)),
+					 this, SLOT(displayFilesAndResultsInDirectory()));
 }
 
 void MainWindow::displaySearchInFileResults(QVector <QPair<QVariant, QString> > searchResults) {

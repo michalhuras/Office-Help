@@ -51,6 +51,7 @@ signals:
 	void searchInListedFilesButton2Clicked();
 
 
+
 private slots:
 	void displaySearchInFileResults(QVector <QPair<QVariant, QString> > searchResults);
 	void displayFilesInDirectory();

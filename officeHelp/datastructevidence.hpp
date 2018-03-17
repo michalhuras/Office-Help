@@ -8,6 +8,7 @@
 
 namespace CUS{
 //common used structures
+
 enum searchMode {
 	error = -2,
 	undefined = -1,

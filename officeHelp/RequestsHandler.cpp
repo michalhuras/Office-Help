@@ -92,23 +92,32 @@ void RequestsHandler::searchInListedFilesButton2Clicked() {
 		newResult.fileName = filesList.at(0);
 
 		QVector <QPair<int, QString> > vRetrievalResult;
-		QFile file(catalogPath + filesList.at(0));
+		QFile file(catalogPath + "/" + filesList.at(0));
+
 		if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+			qDebug() << "Udało się otworzyć plik:      " << filesList.at(0);
+
 			//Read lines from file and save to QVector
 			int lineNumber = 0;
 			QTextStream in(&file);
 			while (!in.atEnd()) {
+				qDebug() << "Linia      " << lineNumber;
 				lineNumber++;
 				QString lineText = in.readLine();
 				vRetrievalResult.push_back(QPair<int , QString >(lineNumber,lineText));
 			}
 		}
 
+		qDebug() << "vRetrievalResult.size()     " << vRetrievalResult.size();
+		qDebug() << "catalogPath     " << catalogPath;
+		qDebug() << "filesList.at(0)     " << filesList.at(0);
+
 		QVector<QVector<QPair<int , QString > > > results;
 		//Process received data
 		int lineNumber = 0;
-		while(lineNumber != vRetrievalResult.size()) {
-		if ( vRetrievalResult.at(lineNumber).second.contains(
+		while(lineNumber < vRetrievalResult.size()) {
+					qDebug() << "lineNumber     " << lineNumber;
+			if ( vRetrievalResult.at(lineNumber).second.contains(
 					 mServerManager->getTextToSearch(), Qt::CaseInsensitive)) {
 				if ((lineNumber < 2) && (5 > vRetrievalResult.size())) {
 					results.push_back(vRetrievalResult.mid(0,vRetrievalResult.size()));
@@ -122,13 +131,15 @@ void RequestsHandler::searchInListedFilesButton2Clicked() {
 				else {
 					results.push_back(vRetrievalResult.mid(lineNumber - 2, 5));
 				}
-		}
+			}
 		lineNumber++;
 		}
 
+		qDebug() << "results.size()     " << results.size();
 		newResult.results = results;
 		newResult.numberOfResults= results.count();
 		result.append(newResult);
+		filesList.removeFirst();
 	}
 
 	emit displayFilesAndResultsInDirectory(result);

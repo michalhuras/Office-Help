@@ -62,5 +62,4 @@ void ServerManager::setFilesAndResultsInDirectory(QVector<CUS::searchReult> Sear
 
 
 // TO DO:
-// Dopisać do sygnałów i slotów testy jednostkowe
-// czas realizacji: do 24.02.218
+// Dopisać do sygnałów i slotów testy jednostkowe`

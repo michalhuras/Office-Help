@@ -4,7 +4,7 @@
 #include <QVector>
 #include <QString>
 #include <QStringList>
-#include <QDebug> // TO DO
+#include <QDebug> // TODO
 #include <QObject>
 #include <QPair>
 #include <QVariant>
@@ -29,7 +29,7 @@ public slots:
 	void wordToSearchChangeSlot(QString newValue);
 	void searchButtonClicked();
 	void showFilesInDirectoryButtonClicked();
-	void showFilesInDirectoryRecursivelyButtonClicked(); // TO DO -za długa nazwa
+	void showFilesInDirectoryRecursivelyButtonClicked(); // TODO -za długa nazwa
 	void searchInListedFilesButton2Clicked();
 
 private:
