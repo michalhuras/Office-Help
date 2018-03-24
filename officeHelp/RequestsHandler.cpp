@@ -19,19 +19,7 @@ void RequestsHandler::wordToSearchChangeSlot(QString newValue) {
 }
 
 void RequestsHandler::searchButtonClicked() {
-	switch (mServerManager->getSearchMode()) {
-	case CUS::error:
-		break;
-	case CUS::inThisCatalog:
-		break;
-	case CUS::inThisCatalogRecursevely:
-		break;
-	case CUS::inThisFile:
-		searchInFile();
-		break;
-	default:
-		break;
-	}
+searchInFile();
 }
 
 void RequestsHandler::showFilesInDirectoryButtonClicked() {
@@ -167,10 +155,25 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 		QString searchedText){
 
 	QList<QTreeWidgetItem *> items;
-	int fileNumber = 0;
+	int fileNumber = 1;
+	int numberOfFiles = filesList->size();
 	while(!filesList->isEmpty()) {
 		QTreeWidgetItem *nextFile = new QTreeWidgetItem();
-		nextFile->setText(0, QString::number(fileNumber));
+		if ((numberOfFiles > 99 && fileNumber > 99) ||
+			(numberOfFiles <100 &&  numberOfFiles > 9 &&
+			 fileNumber < 100  && fileNumber > 9)) {
+			nextFile->setText(0, QString::number(fileNumber));
+		}
+		else if (numberOfFiles < 100 && numberOfFiles > 9 &&
+				 fileNumber <= 9) {
+			nextFile->setText(0, "0" + QString::number(fileNumber));
+		}
+		else if ((numberOfFiles > 99 && fileNumber < 99) ) {
+			nextFile->setText(0, "00" + QString::number(fileNumber));
+		}
+		else {
+			nextFile->setText(0, QString::number(fileNumber));
+		}
 		nextFile->setText(1, filesList->first());
 
 		QStringList vRetrievalResult;
@@ -190,9 +193,17 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 		while(lineNumber < vRetrievalResult.size()) {
 			if ( vRetrievalResult.at(lineNumber).contains(
 					 searchedText, Qt::CaseInsensitive)) {
-				if ((lineNumber < 2) && (5 > vRetrievalResult.size())) {
+				if ((lineNumber <= vRetrievalResult.size() -2) && (lineNumber >= 3)) {
 					QTreeWidgetItem *tempItem1 = new QTreeWidgetItem();
-					//tempItem1->setText(0, "");
+					tempItem1->setText(2, vRetrievalResult.at(lineNumber));
+					nextRow << tempItem1;
+					for (int i = lineNumber - 2; i <= lineNumber + 2; i++) {
+						QTreeWidgetItem *tempItem2 = new QTreeWidgetItem(tempItem1);
+						tempItem2->setText(3,vRetrievalResult.at(i));
+					}
+				}
+				else if ((lineNumber <3) && (vRetrievalResult.size() <= 4)) {
+					QTreeWidgetItem *tempItem1 = new QTreeWidgetItem();
 					tempItem1->setText(2, vRetrievalResult.at(lineNumber));
 					nextRow << tempItem1;
 
@@ -200,41 +211,32 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 						QTreeWidgetItem *tempItem2 = new QTreeWidgetItem(tempItem1);
 						tempItem2->setText(3,vRetrievalResult.at(i));
 					}
-					//results.push_back(vRetrievalResult.mid(0,vRetrievalResult.size()));
 				}
-				else if (lineNumber < 2) {
+				else if ((lineNumber <=3) && (lineNumber < vRetrievalResult.size() - 2)) {
+					QTreeWidgetItem *tempItem1 = new QTreeWidgetItem();
+					tempItem1->setText(2, vRetrievalResult.at(lineNumber));
+					nextRow << tempItem1;
+					for (int i = 0; i <= lineNumber + 2; i++) {
+						QTreeWidgetItem *tempItem2 = new QTreeWidgetItem(tempItem1);
+						tempItem2->setText(3,vRetrievalResult.at(i));
+					}
+				}
+				else if (lineNumber > vRetrievalResult.size() - 2) {
 					QTreeWidgetItem *tempItem1 = new QTreeWidgetItem();
 					tempItem1->setText(2, vRetrievalResult.at(lineNumber));
 					nextRow << tempItem1;
 
-					for (int i = 0; i < vRetrievalResult.size() + 3; i++) {
+					for (int i = lineNumber - 2; i < vRetrievalResult.size(); i++) {
 						QTreeWidgetItem *tempItem2 = new QTreeWidgetItem(tempItem1);
 						tempItem2->setText(3,vRetrievalResult.at(i));
 					}
-					//results.push_back(vRetrievalResult.mid(0,vRetrievalResult.size() + 3));
-					//TODO trzeba to popoprawiać
-				}
-				else if (lineNumber + 2 > vRetrievalResult.size()) {
-					QTreeWidgetItem *tempItem1 = new QTreeWidgetItem();
-					tempItem1->setText(2, vRetrievalResult.at(lineNumber));
-					nextRow << tempItem1;
-
-					for (int i = lineNumber - 2; i < vRetrievalResult.size() - lineNumber; i++) {
-						QTreeWidgetItem *tempItem2 = new QTreeWidgetItem(tempItem1);
-						tempItem2->setText(3,vRetrievalResult.at(i));
-					}
-					//results.push_back(vRetrievalResult.mid(lineNumber - 2, vRetrievalResult.size() - lineNumber ));
 				}
 				else {
 					QTreeWidgetItem *tempItem1 = new QTreeWidgetItem();
 					tempItem1->setText(2, vRetrievalResult.at(lineNumber));
 					nextRow << tempItem1;
-
-					for (int i = lineNumber - 2; i < 5; i++) {
-						QTreeWidgetItem *tempItem2 = new QTreeWidgetItem(tempItem1);
-						tempItem2->setText(3,vRetrievalResult.at(i));
-					}
-					//results.push_back(vRetrievalResult.mid(lineNumber - 2, 5));
+					QTreeWidgetItem *tempItem2 = new QTreeWidgetItem(tempItem1);
+					tempItem2->setText(3,vRetrievalResult.at(lineNumber));
 				}
 			}
 		lineNumber++;

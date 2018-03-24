@@ -38,7 +38,7 @@ void MainWindow::setTablesStartingParameters(){
 	labelsList2.append("Number\nof resuts");
 	labelsList2.append("Text");
 
-	ui->tableWidget->setColumnCount(4);
+	ui->tableWidget->setColumnCount(2);
 	ui->tableWidget->setRowCount(1);
 	ui->tableWidget->setColumnWidth(0,69);
 	ui->tableWidget->setColumnWidth(1,500);
@@ -56,16 +56,15 @@ void MainWindow::setTablesStartingParameters(){
 	ui->tableWidget_2->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->tableWidget_2->setHorizontalHeaderLabels(labelsList2);
 
-	/*
-	ui->treeView_3->setColumnCount(4);
-	ui->treeView_3->setRowCount(1);
-	ui->treeView_3->setColumnWidth(0,69);
-	ui->treeView_3->setColumnWidth(1,131);
-	ui->treeView_3->setColumnWidth(2,69);
-	ui->treeView_3->setColumnWidth(3,300);
-	ui->treeView_3->verticalHeader()->setVisible(false);
-	ui->treeView_3->setEditTriggers(QAbstractItemView::NoEditTriggers);
-	*/
+	ui->treeWidget_3->setColumnCount(4);
+	QStringList labels =
+			(QStringList() << "Number" << "File name" << "Results" << "Expanded results");
+	ui->treeWidget_3->setHeaderLabels(labels);
+	ui->treeWidget_3->resizeColumnToContents(0);
+	ui->treeWidget_3->resizeColumnToContents(1);
+	ui->treeWidget_3->resizeColumnToContents(2);
+	ui->treeWidget_3->resizeColumnToContents(3);
+
 }
 
 void MainWindow::setSignalsAndSlotsConnections() {
@@ -142,11 +141,10 @@ void MainWindow::displayFilesInDirectory() {
 }
 
 void MainWindow::displayFilesInDirectoryRecursively(){
-	QStringList labels;
-	labels << "Number";
-	labels << "File name";
+	QStringList labels = (QStringList() << "Number" << "File name");
 
-	//TODO ogarnąć jak usuwać te elementy z tablicy
+	while (ui->treeWidget_3->topLevelItemCount())
+		ui->treeWidget_3->takeTopLevelItem(0);
 
 	ui->treeWidget_3->setColumnCount(2);
 	ui->treeWidget_3->setHeaderLabels(labels);
@@ -155,6 +153,8 @@ void MainWindow::displayFilesInDirectoryRecursively(){
 	ui->treeWidget_3->insertTopLevelItems(
 				0,
 				mServerManager->getFilesInDirectoryRecursivelyToView());
+	ui->treeWidget_3->setSortingEnabled(true);
+	ui->treeWidget_3->sortByColumn(0 ,Qt::AscendingOrder);
 }
 
 void MainWindow::displayFilesAndResultsInDirectory() {
@@ -162,13 +162,15 @@ void MainWindow::displayFilesAndResultsInDirectory() {
 		ui->treeWidget_3->takeTopLevelItem(0);
 
 	ui->treeWidget_3->setColumnCount(4);
-	QStringList labels = (QStringList() << "Number" << "File name" << "Results" << "Expanded results");
+	QStringList labels =
+			(QStringList() << "Number" << "File name" << "Results" << "Expanded results");
 	ui->treeWidget_3->setHeaderLabels(labels);
 
 	ui->treeWidget_3->insertTopLevelItems(
-				0,
-				mServerManager->getSearchResultInFile());
+			0,
+			mServerManager->getSearchResultInFile());
 	ui->treeWidget_3->setSortingEnabled(true);
+	ui->treeWidget_3->sortByColumn(0 ,Qt::AscendingOrder);
 	ui->treeWidget_3->expandAll();
 	ui->treeWidget_3->resizeColumnToContents(0);
 	ui->treeWidget_3->resizeColumnToContents(1);

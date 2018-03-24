@@ -60,9 +60,24 @@ void ServerManager::setfilesInDirectoryRecursively(QStringList filesInDirectoryR
 
 	QList<QTreeWidgetItem *> items;
 	int fileNumber = 0;
+	int numberOfFiles = filesInDirectoryRecursively.size();
 	while (!filesInDirectoryRecursively.isEmpty()) {
 		QTreeWidgetItem *temp = new QTreeWidgetItem();
-		temp->setText(0, QString::number(fileNumber));
+		if ((numberOfFiles > 99 && fileNumber > 99) ||
+			(numberOfFiles <100 &&  numberOfFiles > 9 &&
+			 fileNumber < 100  && fileNumber > 9)) {
+			temp->setText(0, QString::number(fileNumber));
+		}
+		else if (numberOfFiles < 100 && numberOfFiles > 9 &&
+				 fileNumber <= 9) {
+			temp->setText(0, "0" + QString::number(fileNumber));
+		}
+		else if ((numberOfFiles > 99 && fileNumber < 99) ) {
+			temp->setText(0, "00" + QString::number(fileNumber));
+		}
+		else {
+			temp->setText(0, QString::number(fileNumber));
+		}
 		temp->setText(1, filesInDirectoryRecursively.first());
 		items.append(temp);
 		filesInDirectoryRecursively.removeFirst();
