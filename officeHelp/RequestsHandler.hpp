@@ -22,7 +22,7 @@ signals:
 	void displaySearchInFileResults(QVector <QPair<QVariant, QString> >);
 	void displayFilesInDirectory(QStringList);
 	void displayFilesInDirectoryRecursively(QStringList);
-	void displayFilesAndResultsInDirectory(QVector<CUS::searchReult>);
+	void displayFilesAndResultsInDirectory(QList<QTreeWidgetItem *>);
 
 public slots:
 	void catalogPathChangeSlot(QString newValue);
@@ -37,8 +37,15 @@ private:
 
 	void searchInFile();
 	QVector <QPair<QVariant, QString> > readFileLines();
-	void createFileListRecursively(QString CatalogPath, QStringList *mList, QString prefix = "");
-
+	void createFileListRecursively(
+			QString CatalogPath,
+			QStringList *mList,
+			QString prefix = "",
+			bool recursively = false);
+	QList<QTreeWidgetItem *> createQTreeWidgetItemList(
+			QString catalogPath,
+			QStringList *filesList,
+			QString searchedText);
 };
 
 #endif // REQUESTSHANDLER_H

@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include <QTreeWidgetItem>
+#include <QList>
 
 #include <datastructevidence.hpp>
 
@@ -17,8 +19,8 @@ public:
 	CUS::searchMode getSearchMode();
 	QStringList getFilesInDirectory();
 	QStringList getFilesInDirectoryRecursively();
-	QVector<CUS::searchReult> getSearchResultInFile();
-
+	QList<QTreeWidgetItem *> getSearchResultInFile();
+	QList<QTreeWidgetItem *> getFilesInDirectoryRecursivelyToView();
 
 public slots:
 	void setPath(QString aPath);
@@ -26,7 +28,7 @@ public slots:
 	void setSearchMode(CUS::searchMode aSearchMode);
 	void setfilesInDirectory(QStringList filesInDirectory);
 	void setfilesInDirectoryRecursively(QStringList filesInDirectoryRecursively);
-	void setFilesAndResultsInDirectory(QVector<CUS::searchReult> SearchResultInFile);
+	void setFilesAndResultsInDirectory(QList<QTreeWidgetItem *> SearchResultInFile);
 
 
 protected:
@@ -35,7 +37,8 @@ protected:
 	CUS::searchMode mSearchMode;
 	QStringList mFilesInDirectory;
 	QStringList mFilesInDirectoryRecursively;
-	QVector<CUS::searchReult> mSearchResultInFile;
+	QList<QTreeWidgetItem *> mSearchResultInFile;
+	QList<QTreeWidgetItem *> mFilesInDirectoryRecursivelyView;
 };
 
 #endif // SERVERMENAGER_H

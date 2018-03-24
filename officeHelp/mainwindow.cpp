@@ -1,4 +1,7 @@
 #include <QFileDialog>
+#include <QTreeView>
+#include <QStandardItemModel>
+#include <QStandardItem>
 
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
@@ -53,14 +56,16 @@ void MainWindow::setTablesStartingParameters(){
 	ui->tableWidget_2->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->tableWidget_2->setHorizontalHeaderLabels(labelsList2);
 
-	ui->tableWidget_3->setColumnCount(4);
-	ui->tableWidget_3->setRowCount(1);
-	ui->tableWidget_3->setColumnWidth(0,69);
-	ui->tableWidget_3->setColumnWidth(1,131);
-	ui->tableWidget_3->setColumnWidth(2,69);
-	ui->tableWidget_3->setColumnWidth(3,300);
-	ui->tableWidget_3->verticalHeader()->setVisible(false);
-	ui->tableWidget_3->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	/*
+	ui->treeView_3->setColumnCount(4);
+	ui->treeView_3->setRowCount(1);
+	ui->treeView_3->setColumnWidth(0,69);
+	ui->treeView_3->setColumnWidth(1,131);
+	ui->treeView_3->setColumnWidth(2,69);
+	ui->treeView_3->setColumnWidth(3,300);
+	ui->treeView_3->verticalHeader()->setVisible(false);
+	ui->treeView_3->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	*/
 }
 
 void MainWindow::setSignalsAndSlotsConnections() {
@@ -71,8 +76,8 @@ void MainWindow::setSignalsAndSlotsConnections() {
 					 mServerManager, SLOT(setfilesInDirectory(QStringList)));
 	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectoryRecursively(QStringList)),
 					 mServerManager, SLOT(setfilesInDirectoryRecursively(QStringList)));
-	QObject::connect(mRequestsHandler, SIGNAL(displayFilesAndResultsInDirectory(QVector<CUS::searchReult>)),
-					 mServerManager, SLOT(setFilesAndResultsInDirectory(QVector<CUS::searchReult>)));
+	QObject::connect(mRequestsHandler, SIGNAL(displayFilesAndResultsInDirectory(QList<QTreeWidgetItem *>)),
+					 mServerManager, SLOT(setFilesAndResultsInDirectory(QList<QTreeWidgetItem *>)));
 
 	//mServerManager
 	QObject::connect(this, SIGNAL(onPathBoxEditingFinishedSignal(QString)),
@@ -105,7 +110,7 @@ void MainWindow::setSignalsAndSlotsConnections() {
 					 this, SLOT(displayFilesInDirectory()));
 	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectoryRecursively(QStringList)),
 					 this, SLOT(displayFilesInDirectoryRecursively()));
-	QObject::connect(mRequestsHandler, SIGNAL(displayFilesAndResultsInDirectory(QVector<CUS::searchReult>)),
+	QObject::connect(mRequestsHandler, SIGNAL(displayFilesAndResultsInDirectory(QList<QTreeWidgetItem *>)),
 					 this, SLOT(displayFilesAndResultsInDirectory()));
 }
 
@@ -137,24 +142,39 @@ void MainWindow::displayFilesInDirectory() {
 }
 
 void MainWindow::displayFilesInDirectoryRecursively(){
-	QStringList tempFilesList = mServerManager->getFilesInDirectoryRecursively();
-	QStringList *mFilesList = &tempFilesList;
-	ui->tableWidget_3->setRowCount(mFilesList->size());
-	QVariant rowNumber = 0;
-	while (!mFilesList->isEmpty()){
-		ui->tableWidget_3->setItem(rowNumber.toInt(),0,new QTableWidgetItem(
-									   rowNumber.toString()));
-		ui->tableWidget_3->setItem(rowNumber.toInt(),1,new QTableWidgetItem(
-									   mFilesList->first()));
-		rowNumber = rowNumber.toInt() + 1;
-		mFilesList->erase(mFilesList->begin());
-	}
+	QStringList labels;
+	labels << "Number";
+	labels << "File name";
+
+	//TODO ogarnąć jak usuwać te elementy z tablicy
+
+	ui->treeWidget_3->setColumnCount(2);
+	ui->treeWidget_3->setHeaderLabels(labels);
+	ui->treeWidget_3->resizeColumnToContents(0);
+	ui->treeWidget_3->resizeColumnToContents(1);
+	ui->treeWidget_3->insertTopLevelItems(
+				0,
+				mServerManager->getFilesInDirectoryRecursivelyToView());
 }
 
 void MainWindow::displayFilesAndResultsInDirectory() {
+	while (ui->treeWidget_3->topLevelItemCount())
+		ui->treeWidget_3->takeTopLevelItem(0);
 
-qDebug() << "Jestem tu... ";
+	ui->treeWidget_3->setColumnCount(4);
+	QStringList labels = (QStringList() << "Number" << "File name" << "Results" << "Expanded results");
+	ui->treeWidget_3->setHeaderLabels(labels);
 
+	ui->treeWidget_3->insertTopLevelItems(
+				0,
+				mServerManager->getSearchResultInFile());
+	ui->treeWidget_3->setSortingEnabled(true);
+	ui->treeWidget_3->expandAll();
+	ui->treeWidget_3->resizeColumnToContents(0);
+	ui->treeWidget_3->resizeColumnToContents(1);
+	ui->treeWidget_3->resizeColumnToContents(2);
+	ui->treeWidget_3->resizeColumnToContents(3);
+	ui->treeWidget_3->collapseAll();
 }
 
 void MainWindow::on_pathBox_editingFinished() {

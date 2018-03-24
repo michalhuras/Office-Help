@@ -5,7 +5,7 @@
 #include <QVector>
 #include <QString>
 #include <QFileInfo>
-
+#include <QStandardItem>
 
 RequestsHandler::RequestsHandler(ServerManager *aServerManager):
 		mServerManager(aServerManager) {;}
@@ -62,90 +62,30 @@ void RequestsHandler::showFilesInDirectoryRecursivelyButtonClicked() { //TO Do z
 	catalogPath = fileInformations.path();
 
 	//Create file list recursively
-	createFileListRecursively(catalogPath, mFilesList,"");
+	createFileListRecursively(catalogPath, mFilesList, "", true);
 	emit displayFilesInDirectoryRecursively(filesList);
 	//TO DO czy to jest najlepsza opcja przekazywania -wskaźnik
 }
 
 void RequestsHandler::searchInListedFilesButton2Clicked() {
 	QString catalogPath = mServerManager->getPath();
+	QStringList *filesList = new QStringList;
 
 	//Check if path is to file or Catalog
 	QFileInfo fileInformations(catalogPath);
 	catalogPath = fileInformations.path();
 
 	//Create file list
-	QDir pathDir = QDir(catalogPath);
-	QStringList filesList;
-	filesList = pathDir.entryList(QStringList("*"),
-								  QDir::Files | QDir::NoSymLinks,
-								  QDir::Name);
-	//TODO wyeksportować to do osobnej funkcji żeby można było to wykorzystać w innych
-	//metodach
+	createFileListRecursively(catalogPath, filesList, "", true);
 
-	QVector<CUS::searchReult> result;
-	while(!filesList.isEmpty()) {
-		//TODO wyeksportować to do osobnej funkcji
+	QList<QTreeWidgetItem *> items = createQTreeWidgetItemList(
+										catalogPath,
+										filesList,
+										mServerManager->getTextToSearch());
 
-		CUS::searchReult newResult;
-		newResult.fileDirectory = catalogPath + filesList.at(0);
-		newResult.fileName = filesList.at(0);
-
-		QVector <QPair<int, QString> > vRetrievalResult;
-		QFile file(catalogPath + "/" + filesList.at(0));
-
-		if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-			qDebug() << "Udało się otworzyć plik:      " << filesList.at(0);
-
-			//Read lines from file and save to QVector
-			int lineNumber = 0;
-			QTextStream in(&file);
-			while (!in.atEnd()) {
-				qDebug() << "Linia      " << lineNumber;
-				lineNumber++;
-				QString lineText = in.readLine();
-				vRetrievalResult.push_back(QPair<int , QString >(lineNumber,lineText));
-			}
-		}
-
-		qDebug() << "vRetrievalResult.size()     " << vRetrievalResult.size();
-		qDebug() << "catalogPath     " << catalogPath;
-		qDebug() << "filesList.at(0)     " << filesList.at(0);
-
-		QVector<QVector<QPair<int , QString > > > results;
-		//Process received data
-		int lineNumber = 0;
-		while(lineNumber < vRetrievalResult.size()) {
-					qDebug() << "lineNumber     " << lineNumber;
-			if ( vRetrievalResult.at(lineNumber).second.contains(
-					 mServerManager->getTextToSearch(), Qt::CaseInsensitive)) {
-				if ((lineNumber < 2) && (5 > vRetrievalResult.size())) {
-					results.push_back(vRetrievalResult.mid(0,vRetrievalResult.size()));
-				}
-				else if (lineNumber < 2) {
-					results.push_back(vRetrievalResult.mid(0,vRetrievalResult.size() + 3));
-				}
-				else if (lineNumber + 2 > vRetrievalResult.size()) {
-					results.push_back(vRetrievalResult.mid(lineNumber - 2, vRetrievalResult.size() - lineNumber ));
-				}
-				else {
-					results.push_back(vRetrievalResult.mid(lineNumber - 2, 5));
-				}
-			}
-		lineNumber++;
-		}
-
-		qDebug() << "results.size()     " << results.size();
-		newResult.results = results;
-		newResult.numberOfResults= results.count();
-		result.append(newResult);
-		filesList.removeFirst();
-	}
-
-	emit displayFilesAndResultsInDirectory(result);
+	emit displayFilesAndResultsInDirectory(items);
 }
 
-//void RequestsHandler::() {
 //PRIVATE FUNCTIONS
 void RequestsHandler::searchInFile() {
 	QVector <QPair<QVariant, QString> > vRetrievalResult = readFileLines();
@@ -184,11 +124,11 @@ QVector <QPair<QVariant, QString> > RequestsHandler::readFileLines() {
 	return vRetrievalResult;
 }
 
-void RequestsHandler::createFileListRecursively(QString path,
+void RequestsHandler::createFileListRecursively(QString path,   //blabla bla
 												QStringList *mList,
-												QString prefix)
-{ //TO DO nazewnictowo -ujednolicić przedrostki (mList)
-
+												QString prefix,
+												bool recursively) {
+//TO DO nazewnictowo -ujednolicić przedrostki (mList)
 
 	QDir dirForFiles = QDir(path);
 	QStringList filesList;
@@ -211,20 +151,101 @@ void RequestsHandler::createFileListRecursively(QString path,
 										   QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
 
 	while (!catalogList.isEmpty()) {
-		createFileListRecursively(path + "/" + catalogList.first(), mList,
-								  prefix + "/" + catalogList.first());
+		if (recursively)
+			createFileListRecursively(
+						path + "/" + catalogList.first(),
+						mList,
+						prefix + "/" + catalogList.first(),
+						true);
 		catalogList.erase(catalogList.begin());
 	}
 }
 
-/*
-CUS::searchReult *RequestsHandler::createSearchResults() {
+QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
+		QString catalogPath,
+		QStringList *filesList,
+		QString searchedText){
 
+	QList<QTreeWidgetItem *> items;
+	int fileNumber = 0;
+	while(!filesList->isEmpty()) {
+		QTreeWidgetItem *nextFile = new QTreeWidgetItem();
+		nextFile->setText(0, QString::number(fileNumber));
+		nextFile->setText(1, filesList->first());
 
+		QStringList vRetrievalResult;
+		QFile file(catalogPath + "/" + filesList->at(0));
+		if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+			//Read lines from file and save to QStringlist
+			QTextStream in(&file);
+			while (!in.atEnd()) {
+				QString lineText = in.readLine();
+				vRetrievalResult << lineText;
+			}
+		}
 
+		QList<QTreeWidgetItem *> nextRow;
+		//Process received data
+		int lineNumber = 0;
+		while(lineNumber < vRetrievalResult.size()) {
+			if ( vRetrievalResult.at(lineNumber).contains(
+					 searchedText, Qt::CaseInsensitive)) {
+				if ((lineNumber < 2) && (5 > vRetrievalResult.size())) {
+					QTreeWidgetItem *tempItem1 = new QTreeWidgetItem();
+					//tempItem1->setText(0, "");
+					tempItem1->setText(2, vRetrievalResult.at(lineNumber));
+					nextRow << tempItem1;
+
+					for (int i = 0; i < vRetrievalResult.size(); i++) {
+						QTreeWidgetItem *tempItem2 = new QTreeWidgetItem(tempItem1);
+						tempItem2->setText(3,vRetrievalResult.at(i));
+					}
+					//results.push_back(vRetrievalResult.mid(0,vRetrievalResult.size()));
+				}
+				else if (lineNumber < 2) {
+					QTreeWidgetItem *tempItem1 = new QTreeWidgetItem();
+					tempItem1->setText(2, vRetrievalResult.at(lineNumber));
+					nextRow << tempItem1;
+
+					for (int i = 0; i < vRetrievalResult.size() + 3; i++) {
+						QTreeWidgetItem *tempItem2 = new QTreeWidgetItem(tempItem1);
+						tempItem2->setText(3,vRetrievalResult.at(i));
+					}
+					//results.push_back(vRetrievalResult.mid(0,vRetrievalResult.size() + 3));
+					//TODO trzeba to popoprawiać
+				}
+				else if (lineNumber + 2 > vRetrievalResult.size()) {
+					QTreeWidgetItem *tempItem1 = new QTreeWidgetItem();
+					tempItem1->setText(2, vRetrievalResult.at(lineNumber));
+					nextRow << tempItem1;
+
+					for (int i = lineNumber - 2; i < vRetrievalResult.size() - lineNumber; i++) {
+						QTreeWidgetItem *tempItem2 = new QTreeWidgetItem(tempItem1);
+						tempItem2->setText(3,vRetrievalResult.at(i));
+					}
+					//results.push_back(vRetrievalResult.mid(lineNumber - 2, vRetrievalResult.size() - lineNumber ));
+				}
+				else {
+					QTreeWidgetItem *tempItem1 = new QTreeWidgetItem();
+					tempItem1->setText(2, vRetrievalResult.at(lineNumber));
+					nextRow << tempItem1;
+
+					for (int i = lineNumber - 2; i < 5; i++) {
+						QTreeWidgetItem *tempItem2 = new QTreeWidgetItem(tempItem1);
+						tempItem2->setText(3,vRetrievalResult.at(i));
+					}
+					//results.push_back(vRetrievalResult.mid(lineNumber - 2, 5));
+				}
+			}
+		lineNumber++;
+		}
+
+		// adding a row to an item starts a subtree
+		nextFile->insertChildren(1, nextRow);
+		items.append(nextFile);
+		filesList->removeFirst();
+		fileNumber++;
+	}
+
+	return items;
 }
-
-*/
-
-
-

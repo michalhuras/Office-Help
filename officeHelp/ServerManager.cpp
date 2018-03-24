@@ -28,8 +28,12 @@ QStringList ServerManager::getFilesInDirectoryRecursively() {
 	return mFilesInDirectoryRecursively;
 }
 
-QVector<CUS::searchReult> ServerManager::getSearchResultInFile() {
+QList<QTreeWidgetItem *> ServerManager::getSearchResultInFile() {
 	return mSearchResultInFile;
+}
+
+QList<QTreeWidgetItem *> ServerManager::getFilesInDirectoryRecursivelyToView() {
+	return mFilesInDirectoryRecursivelyView;
 }
 
 void ServerManager::setPath(QString aPath) {
@@ -53,13 +57,25 @@ void ServerManager::setfilesInDirectory(QStringList filesInDirectory) {
 
 void ServerManager::setfilesInDirectoryRecursively(QStringList filesInDirectoryRecursively) {
 	mFilesInDirectoryRecursively = filesInDirectoryRecursively;
+
+	QList<QTreeWidgetItem *> items;
+	int fileNumber = 0;
+	while (!filesInDirectoryRecursively.isEmpty()) {
+		QTreeWidgetItem *temp = new QTreeWidgetItem();
+		temp->setText(0, QString::number(fileNumber));
+		temp->setText(1, filesInDirectoryRecursively.first());
+		items.append(temp);
+		filesInDirectoryRecursively.removeFirst();
+		fileNumber++;
+	}
+
+	mFilesInDirectoryRecursivelyView = items;
 }
 
 
-void ServerManager::setFilesAndResultsInDirectory(QVector<CUS::searchReult> SearchResultInFile) {
+void ServerManager::setFilesAndResultsInDirectory(QList<QTreeWidgetItem *> SearchResultInFile) {
 	mSearchResultInFile = SearchResultInFile;
 }
-
 
 // TO DO:
 // Dopisać do sygnałów i slotów testy jednostkowe`
