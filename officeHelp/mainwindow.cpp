@@ -28,15 +28,10 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::setTablesStartingParameters(){
-	QStringList labelsList1;
-	labelsList1.append("Line \nnumber");
-	labelsList1.append("Line text");
+	QStringList labelsList1 = (QStringList() << "Line \nnumber" << "Line text");
 
-	QStringList labelsList2;
-	labelsList2.append("Number");
-	labelsList2.append("File\nname");
-	labelsList2.append("Number\nof resuts");
-	labelsList2.append("Text");
+	QStringList labels =
+			(QStringList() << "Number" << "File name" << "Results" << "Expanded results");
 
 	ui->tableWidget->setColumnCount(2);
 	ui->tableWidget->setRowCount(1);
@@ -46,19 +41,14 @@ void MainWindow::setTablesStartingParameters(){
 	ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->tableWidget->setHorizontalHeaderLabels(labelsList1);
 
-	ui->tableWidget_2->setColumnCount(4);
-	ui->tableWidget_2->setRowCount(1);
-	ui->tableWidget_2->setColumnWidth(0,69);
-	ui->tableWidget_2->setColumnWidth(1,131);
-	ui->tableWidget_2->setColumnWidth(2,69);
-	ui->tableWidget_2->setColumnWidth(3,300);
-	ui->tableWidget_2->verticalHeader()->setVisible(false);
-	ui->tableWidget_2->setEditTriggers(QAbstractItemView::NoEditTriggers);
-	ui->tableWidget_2->setHorizontalHeaderLabels(labelsList2);
+	ui->treeWidget_2->setColumnCount(4);
+	ui->treeWidget_2->setHeaderLabels(labels);
+	ui->treeWidget_2->resizeColumnToContents(0);
+	ui->treeWidget_2->resizeColumnToContents(1);
+	ui->treeWidget_2->resizeColumnToContents(2);
+	ui->treeWidget_2->resizeColumnToContents(3);
 
 	ui->treeWidget_3->setColumnCount(4);
-	QStringList labels =
-			(QStringList() << "Number" << "File name" << "Results" << "Expanded results");
 	ui->treeWidget_3->setHeaderLabels(labels);
 	ui->treeWidget_3->resizeColumnToContents(0);
 	ui->treeWidget_3->resizeColumnToContents(1);
@@ -127,6 +117,7 @@ void MainWindow::displaySearchInFileResults(QVector <QPair<QVariant, QString> > 
 }
 
 void MainWindow::displayFilesInDirectory() {
+	/*
 	QStringList filesList = mServerManager->getFilesInDirectory();
 	ui->tableWidget_2->setRowCount(filesList.size());
 	QVariant rowNumber = 0;
@@ -138,6 +129,7 @@ void MainWindow::displayFilesInDirectory() {
 		rowNumber = rowNumber.toInt() + 1;
 		filesList.erase(filesList.begin());
 	}
+	*/
 }
 
 void MainWindow::displayFilesInDirectoryRecursively(){
