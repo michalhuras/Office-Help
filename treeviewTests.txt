@@ -1,0 +1,57 @@
+1///////////////////////
+
+void MainWindow::displayFilesInDirectoryRecursively(){
+	QStringList tempFilesList = mServerManager->getFilesInDirectoryRecursively();
+	QStringList labels;
+	labels << "Number";
+	labels << "File name";
+
+	QStandardItemModel *standardModel = new QStandardItemModel ;
+	standardModel->setHorizontalHeaderLabels(labels);
+
+		QList<QStandardItem *> preparedRow;
+
+		preparedRow << new QStandardItem("first");
+		preparedRow << new QStandardItem("second");
+
+
+		QStandardItem *item = standardModel->invisibleRootItem();
+		// adding a row to the invisible root item produces a root element
+		item->appendRow(preparedRow);
+
+		QList<QStandardItem *> secondRow;
+
+		secondRow << new QStandardItem("111");
+		secondRow << new QStandardItem("222");
+		secondRow << new QStandardItem("333");
+
+		// adding a row to an item starts a subtree
+		preparedRow.first()->appendRow(secondRow);
+
+	ui->treeView_3->setModel(standardModel);
+	ui->treeView_3->expandAll();
+}
+
+
+2///////////////////////
+	/*
+	QStringList labels;
+	labels << "Number";
+	labels << "File name";
+
+	QStandardItemModel *standardModel = new QStandardItemModel ;
+	standardModel->setHorizontalHeaderLabels(labels);
+	int fileNumber = 0;
+	while (!tempFilesList.isEmpty()) {
+		QList<QStandardItem *> preparedRow;
+		preparedRow << new QStandardItem(QString::number(fileNumber));
+		preparedRow << new QStandardItem(tempFilesList.first());
+		QStandardItem *item = standardModel->invisibleRootItem();
+		item->appendRow(preparedRow);
+		tempFilesList.removeFirst();
+		fileNumber++;
+	}
+	*/
+
+//	ui->treeWidget_3->setModel(standardModel);
+//	ui->treeWidget_3->expandAll();

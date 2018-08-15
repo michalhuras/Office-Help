@@ -28,8 +28,12 @@ QStringList ServerManager::getFilesInDirectoryRecursively() {
 	return mFilesInDirectoryRecursively;
 }
 
-QVector<CUS::searchReult> ServerManager::getSearchResultInFile() {
+QList<QTreeWidgetItem *> ServerManager::getSearchResultInFile() {
 	return mSearchResultInFile;
+}
+
+QList<QTreeWidgetItem *> ServerManager::getFilesInDirectoryRecursivelyToView() {
+	return mFilesInDirectoryRecursivelyView;
 }
 
 void ServerManager::setPath(QString aPath) {
@@ -53,14 +57,40 @@ void ServerManager::setfilesInDirectory(QStringList filesInDirectory) {
 
 void ServerManager::setfilesInDirectoryRecursively(QStringList filesInDirectoryRecursively) {
 	mFilesInDirectoryRecursively = filesInDirectoryRecursively;
+
+	QList<QTreeWidgetItem *> items;
+	int fileNumber = 0;
+	int numberOfFiles = filesInDirectoryRecursively.size();
+	while (!filesInDirectoryRecursively.isEmpty()) {
+		QTreeWidgetItem *temp = new QTreeWidgetItem();
+		if ((numberOfFiles > 99 && fileNumber > 99) ||
+			(numberOfFiles <100 &&  numberOfFiles > 9 &&
+			 fileNumber < 100  && fileNumber > 9)) {
+			temp->setText(0, QString::number(fileNumber));
+		}
+		else if (numberOfFiles < 100 && numberOfFiles > 9 &&
+				 fileNumber <= 9) {
+			temp->setText(0, "0" + QString::number(fileNumber));
+		}
+		else if ((numberOfFiles > 99 && fileNumber < 99) ) {
+			temp->setText(0, "00" + QString::number(fileNumber));
+		}
+		else {
+			temp->setText(0, QString::number(fileNumber));
+		}
+		temp->setText(1, filesInDirectoryRecursively.first());
+		items.append(temp);
+		filesInDirectoryRecursively.removeFirst();
+		fileNumber++;
+	}
+
+	mFilesInDirectoryRecursivelyView = items;
 }
 
 
-void ServerManager::setFilesAndResultsInDirectory(QVector<CUS::searchReult> SearchResultInFile) {
+void ServerManager::setFilesAndResultsInDirectory(QList<QTreeWidgetItem *> SearchResultInFile) {
 	mSearchResultInFile = SearchResultInFile;
 }
 
-
 // TO DO:
-// Dopisać do sygnałów i slotów testy jednostkowe
-// czas realizacji: do 24.02.218
+// Dopisać do sygnałów i slotów testy jednostkowe`

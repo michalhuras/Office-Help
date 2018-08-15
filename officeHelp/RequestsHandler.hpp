@@ -4,7 +4,7 @@
 #include <QVector>
 #include <QString>
 #include <QStringList>
-#include <QDebug> // TO DO
+#include <QDebug> // TODO
 #include <QObject>
 #include <QPair>
 #include <QVariant>
@@ -22,14 +22,14 @@ signals:
 	void displaySearchInFileResults(QVector <QPair<QVariant, QString> >);
 	void displayFilesInDirectory(QStringList);
 	void displayFilesInDirectoryRecursively(QStringList);
-	void displayFilesAndResultsInDirectory(QVector<CUS::searchReult>);
+	void displayFilesAndResultsInDirectory(QList<QTreeWidgetItem *>);
 
 public slots:
 	void catalogPathChangeSlot(QString newValue);
 	void wordToSearchChangeSlot(QString newValue);
 	void searchButtonClicked();
 	void showFilesInDirectoryButtonClicked();
-	void showFilesInDirectoryRecursivelyButtonClicked(); // TO DO -za długa nazwa
+	void showFilesInDirectoryRecursivelyButtonClicked(); // TODO -za długa nazwa
 	void searchInListedFilesButton2Clicked();
 
 private:
@@ -37,8 +37,15 @@ private:
 
 	void searchInFile();
 	QVector <QPair<QVariant, QString> > readFileLines();
-	void createFileListRecursively(QString CatalogPath, QStringList *mList, QString prefix = "");
-
+	void createFileListRecursively(
+			QString CatalogPath,
+			QStringList *mList,
+			QString prefix = "",
+			bool recursively = false);
+	QList<QTreeWidgetItem *> createQTreeWidgetItemList(
+			QString catalogPath,
+			QStringList *filesList,
+			QString searchedText);
 };
 
 #endif // REQUESTSHANDLER_H

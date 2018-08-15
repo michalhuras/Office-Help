@@ -1,4 +1,7 @@
 #include <QFileDialog>
+#include <QTreeView>
+#include <QStandardItemModel>
+#include <QStandardItem>
 
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
@@ -25,17 +28,12 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::setTablesStartingParameters(){
-	QStringList labelsList1;
-	labelsList1.append("Line \nnumber");
-	labelsList1.append("Line text");
+	QStringList labelsList1 = (QStringList() << "Line \nnumber" << "Line text");
 
-	QStringList labelsList2;
-	labelsList2.append("Number");
-	labelsList2.append("File\nname");
-	labelsList2.append("Number\nof resuts");
-	labelsList2.append("Text");
+	QStringList labels =
+			(QStringList() << "Number" << "File name" << "Results" << "Expanded results");
 
-	ui->tableWidget->setColumnCount(4);
+	ui->tableWidget->setColumnCount(2);
 	ui->tableWidget->setRowCount(1);
 	ui->tableWidget->setColumnWidth(0,69);
 	ui->tableWidget->setColumnWidth(1,500);
@@ -43,24 +41,20 @@ void MainWindow::setTablesStartingParameters(){
 	ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->tableWidget->setHorizontalHeaderLabels(labelsList1);
 
-	ui->tableWidget_2->setColumnCount(4);
-	ui->tableWidget_2->setRowCount(1);
-	ui->tableWidget_2->setColumnWidth(0,69);
-	ui->tableWidget_2->setColumnWidth(1,131);
-	ui->tableWidget_2->setColumnWidth(2,69);
-	ui->tableWidget_2->setColumnWidth(3,300);
-	ui->tableWidget_2->verticalHeader()->setVisible(false);
-	ui->tableWidget_2->setEditTriggers(QAbstractItemView::NoEditTriggers);
-	ui->tableWidget_2->setHorizontalHeaderLabels(labelsList2);
+	ui->treeWidget_2->setColumnCount(4);
+	ui->treeWidget_2->setHeaderLabels(labels);
+	ui->treeWidget_2->resizeColumnToContents(0);
+	ui->treeWidget_2->resizeColumnToContents(1);
+	ui->treeWidget_2->resizeColumnToContents(2);
+	ui->treeWidget_2->resizeColumnToContents(3);
 
-	ui->tableWidget_3->setColumnCount(4);
-	ui->tableWidget_3->setRowCount(1);
-	ui->tableWidget_3->setColumnWidth(0,69);
-	ui->tableWidget_3->setColumnWidth(1,131);
-	ui->tableWidget_3->setColumnWidth(2,69);
-	ui->tableWidget_3->setColumnWidth(3,300);
-	ui->tableWidget_3->verticalHeader()->setVisible(false);
-	ui->tableWidget_3->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	ui->treeWidget_3->setColumnCount(4);
+	ui->treeWidget_3->setHeaderLabels(labels);
+	ui->treeWidget_3->resizeColumnToContents(0);
+	ui->treeWidget_3->resizeColumnToContents(1);
+	ui->treeWidget_3->resizeColumnToContents(2);
+	ui->treeWidget_3->resizeColumnToContents(3);
+
 }
 
 void MainWindow::setSignalsAndSlotsConnections() {
@@ -71,8 +65,8 @@ void MainWindow::setSignalsAndSlotsConnections() {
 					 mServerManager, SLOT(setfilesInDirectory(QStringList)));
 	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectoryRecursively(QStringList)),
 					 mServerManager, SLOT(setfilesInDirectoryRecursively(QStringList)));
-	QObject::connect(mRequestsHandler, SIGNAL(displayFilesAndResultsInDirectory(QVector<CUS::searchReult>)),
-					 mServerManager, SLOT(setFilesAndResultsInDirectory(QVector<CUS::searchReult>)));
+	QObject::connect(mRequestsHandler, SIGNAL(displayFilesAndResultsInDirectory(QList<QTreeWidgetItem *>)),
+					 mServerManager, SLOT(setFilesAndResultsInDirectory(QList<QTreeWidgetItem *>)));
 
 	//mServerManager
 	QObject::connect(this, SIGNAL(onPathBoxEditingFinishedSignal(QString)),
@@ -105,8 +99,8 @@ void MainWindow::setSignalsAndSlotsConnections() {
 					 this, SLOT(displayFilesInDirectory()));
 	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectoryRecursively(QStringList)),
 					 this, SLOT(displayFilesInDirectoryRecursively()));
-	QObject::connect(this, SIGNAL(displayFilesAndResultsInDirectory(QVector<CUS::searchReult>)),
-					 mRequestsHandler, SLOT(displayFilesAndResultsInDirectory()));
+	QObject::connect(mRequestsHandler, SIGNAL(displayFilesAndResultsInDirectory(QList<QTreeWidgetItem *>)),
+					 this, SLOT(displayFilesAndResultsInDirectory()));
 }
 
 void MainWindow::displaySearchInFileResults(QVector <QPair<QVariant, QString> > searchResults) {
@@ -123,6 +117,7 @@ void MainWindow::displaySearchInFileResults(QVector <QPair<QVariant, QString> > 
 }
 
 void MainWindow::displayFilesInDirectory() {
+	/*
 	QStringList filesList = mServerManager->getFilesInDirectory();
 	ui->tableWidget_2->setRowCount(filesList.size());
 	QVariant rowNumber = 0;
@@ -134,27 +129,46 @@ void MainWindow::displayFilesInDirectory() {
 		rowNumber = rowNumber.toInt() + 1;
 		filesList.erase(filesList.begin());
 	}
+	*/
 }
 
 void MainWindow::displayFilesInDirectoryRecursively(){
-	QStringList tempFilesList = mServerManager->getFilesInDirectoryRecursively();
-	QStringList *mFilesList = &tempFilesList;
-	ui->tableWidget_3->setRowCount(mFilesList->size());
-	QVariant rowNumber = 0;
-	while (!mFilesList->isEmpty()){
-		ui->tableWidget_3->setItem(rowNumber.toInt(),0,new QTableWidgetItem(
-									   rowNumber.toString()));
-		ui->tableWidget_3->setItem(rowNumber.toInt(),1,new QTableWidgetItem(
-									   mFilesList->first()));
-		rowNumber = rowNumber.toInt() + 1;
-		mFilesList->erase(mFilesList->begin());
-	}
+	QStringList labels = (QStringList() << "Number" << "File name");
+
+	while (ui->treeWidget_3->topLevelItemCount())
+		ui->treeWidget_3->takeTopLevelItem(0);
+
+	ui->treeWidget_3->setColumnCount(2);
+	ui->treeWidget_3->setHeaderLabels(labels);
+	ui->treeWidget_3->resizeColumnToContents(0);
+	ui->treeWidget_3->resizeColumnToContents(1);
+	ui->treeWidget_3->insertTopLevelItems(
+				0,
+				mServerManager->getFilesInDirectoryRecursivelyToView());
+	ui->treeWidget_3->setSortingEnabled(true);
+	ui->treeWidget_3->sortByColumn(0 ,Qt::AscendingOrder);
 }
 
 void MainWindow::displayFilesAndResultsInDirectory() {
+	while (ui->treeWidget_3->topLevelItemCount())
+		ui->treeWidget_3->takeTopLevelItem(0);
 
-qDebug() << "Jestem tu... ";
+	ui->treeWidget_3->setColumnCount(4);
+	QStringList labels =
+			(QStringList() << "Number" << "File name" << "Results" << "Expanded results");
+	ui->treeWidget_3->setHeaderLabels(labels);
 
+	ui->treeWidget_3->insertTopLevelItems(
+			0,
+			mServerManager->getSearchResultInFile());
+	ui->treeWidget_3->setSortingEnabled(true);
+	ui->treeWidget_3->sortByColumn(0 ,Qt::AscendingOrder);
+	ui->treeWidget_3->expandAll();
+	ui->treeWidget_3->resizeColumnToContents(0);
+	ui->treeWidget_3->resizeColumnToContents(1);
+	ui->treeWidget_3->resizeColumnToContents(2);
+	ui->treeWidget_3->resizeColumnToContents(3);
+	ui->treeWidget_3->collapseAll();
 }
 
 void MainWindow::on_pathBox_editingFinished() {
