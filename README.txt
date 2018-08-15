@@ -11,3 +11,6 @@ Also in future I hope to add feature that deletes white spaces from ends of docu
 I used Qt signals and slots. Link to documantation page:
 http://doc.qt.io/archives/qt-4.8/signalsandslots.html
 
+
+
+
