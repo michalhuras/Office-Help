@@ -5,6 +5,7 @@
 
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
+#include "ui_FileDialog.hpp"
 
 #include <QDebug>
 
@@ -184,23 +185,13 @@ void MainWindow::on_textToFindBox_editingFinished() {
 
 void MainWindow::on_pushButton_4_clicked()
 {
-	//TO DO !!! ŻEBY MOŻNA BYŁO SOBIE WYBIERAĆ INTERESUJĄCE NAS PLIKI
-	QFileDialog dialog(this);
-	//dialog.setFileMode(QFileDialog::Directory );
-	dialog.setOption(QFileDialog::ShowDirsOnly,false);
-	QStringList filters;
-	//filters << "Image files (*.png *.xpm *.jpg)"
-	//		<< "Text files (*.txt)"
-	//		<< "Any files (*)";
-	//dialog.setNameFilters(filters);
-	dialog.setFilter(QDir::AllDirs | QDir::Files);
-	//dialog.setFileMode(QFileDialog::ExistingFile );
-	dialog.setDirectory("C:/TestingCatalog/");
-	dialog.setViewMode(QFileDialog::Detail);
-	dialog.exec();
-	QDir fileNames = dialog.directory();
-	qDebug() << fileNames.absolutePath() << "    " << fileNames.dirName();
 
+	FileDialog aFileDialog;
+	aFileDialog.setModal(true);
+	aFileDialog.exec();
+
+	//QDir fileNames = dialog.directory();
+	//qDebug() << fileNames.absolutePath() << "    " << fileNames.dirName();
 	//C:\TestingCatalog
 	//QString fileName = QFileDialog::getOpenFileName(this,
 	//	tr("Open file"), "C:/Users/Public", tr("Image Files (*.png *.jpg *.bmp *.txt)"));
