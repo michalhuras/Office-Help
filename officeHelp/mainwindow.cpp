@@ -41,14 +41,12 @@ void MainWindow::setTablesStartingParameters(){
 	ui->tableWidget->verticalHeader()->setVisible(false);
 	ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->tableWidget->setHorizontalHeaderLabels(labelsList1);
-
 	ui->treeWidget_2->setColumnCount(4);
 	ui->treeWidget_2->setHeaderLabels(labels);
 	ui->treeWidget_2->resizeColumnToContents(0);
 	ui->treeWidget_2->resizeColumnToContents(1);
 	ui->treeWidget_2->resizeColumnToContents(2);
 	ui->treeWidget_2->resizeColumnToContents(3);
-
 	ui->treeWidget_3->setColumnCount(4);
 	ui->treeWidget_3->setHeaderLabels(labels);
 	ui->treeWidget_3->resizeColumnToContents(0);
@@ -135,10 +133,8 @@ void MainWindow::displayFilesInDirectory() {
 
 void MainWindow::displayFilesInDirectoryRecursively(){
 	QStringList labels = (QStringList() << "Number" << "File name");
-
 	while (ui->treeWidget_3->topLevelItemCount())
 		ui->treeWidget_3->takeTopLevelItem(0);
-
 	ui->treeWidget_3->setColumnCount(2);
 	ui->treeWidget_3->setHeaderLabels(labels);
 	ui->treeWidget_3->resizeColumnToContents(0);
@@ -153,12 +149,10 @@ void MainWindow::displayFilesInDirectoryRecursively(){
 void MainWindow::displayFilesAndResultsInDirectory() {
 	while (ui->treeWidget_3->topLevelItemCount())
 		ui->treeWidget_3->takeTopLevelItem(0);
-
 	ui->treeWidget_3->setColumnCount(4);
 	QStringList labels =
 			(QStringList() << "Number" << "File name" << "Results" << "Expanded results");
 	ui->treeWidget_3->setHeaderLabels(labels);
-
 	ui->treeWidget_3->insertTopLevelItems(
 			0,
 			mServerManager->getSearchResultInFile());
@@ -170,6 +164,15 @@ void MainWindow::displayFilesAndResultsInDirectory() {
 	ui->treeWidget_3->resizeColumnToContents(2);
 	ui->treeWidget_3->resizeColumnToContents(3);
 	ui->treeWidget_3->collapseAll();
+}
+
+void MainWindow::pathChanged(QString newPath, QString newName) {
+	QString path = newPath;
+	qDebug() << "Odebrałem  " << newPath;
+	qDebug() << "name       " << newName;
+	if (newName != "")
+		path += "/" + newName;
+	ui->pathBox->setText(path);
 }
 
 void MainWindow::on_pathBox_editingFinished() {
@@ -185,16 +188,11 @@ void MainWindow::on_textToFindBox_editingFinished() {
 
 void MainWindow::on_pushButton_4_clicked()
 {
-
 	FileDialog aFileDialog;
 	aFileDialog.setModal(true);
+	QObject::connect(&aFileDialog, SIGNAL(newPathaccepted(QString, QString)),
+					 this, SLOT(pathChanged(QString, QString)));
 	aFileDialog.exec();
-
-	//QDir fileNames = dialog.directory();
-	//qDebug() << fileNames.absolutePath() << "    " << fileNames.dirName();
-	//C:\TestingCatalog
-	//QString fileName = QFileDialog::getOpenFileName(this,
-	//	tr("Open file"), "C:/Users/Public", tr("Image Files (*.png *.jpg *.bmp *.txt)"));
 }
 
 void MainWindow::on_pushButton_7_clicked()

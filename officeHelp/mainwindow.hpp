@@ -12,11 +12,6 @@
 #include "ServerManager.hpp"
 
 // TO DO dopisać‼ funkcje opcje
-// TO DO ujednolicić bloczki w menu głównym (rozmiary)
-// TO DO sprawdzić w jaki sposób można rozwiązać problem powiększania rozmiaru okna
-//       (aktualnie podczas powiększania okna wielkość elementów nie ulega zmianie)
-
-
 
 namespace Ui {
 class MainWindow;
@@ -50,13 +45,12 @@ signals:
 	void searchInListedFilesButton1Clicked();
 	void searchInListedFilesButton2Clicked();
 
-
-
 private slots:
 	void displaySearchInFileResults(QVector <QPair<QVariant, QString> > searchResults);
 	void displayFilesInDirectory();
 	void displayFilesInDirectoryRecursively();
 	void displayFilesAndResultsInDirectory();
+	void pathChanged(QString newPath, QString newName);
 
 	void on_pathBox_editingFinished();
 	void on_textToFindBox_editingFinished();

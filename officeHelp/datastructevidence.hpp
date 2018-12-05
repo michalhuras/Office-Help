@@ -14,7 +14,8 @@ enum searchMode {
 	undefined = -1,
 	inThisFile = 0,
 	inThisCatalog = 1,
-	inThisCatalogRecursevely = 2 };
+	inThisCatalogRecursevely = 2
+};
 
 struct searchReult
 {
