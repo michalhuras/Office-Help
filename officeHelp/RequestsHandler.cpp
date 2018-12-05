@@ -7,9 +7,11 @@
 #include <QFileInfo>
 #include <QStandardItem>
 
+#include <QDebug>
+
 RequestsHandler::RequestsHandler(ServerManager *aServerManager):
 		mServerManager(aServerManager) {;}
-//SLOTS
+
 void RequestsHandler::catalogPathChangeSlot(QString newValue) {
 	qDebug() << "catalog path changed:  " << newValue;
 }
@@ -74,11 +76,9 @@ void RequestsHandler::searchInListedFilesButton2Clicked() {
 	emit displayFilesAndResultsInDirectory(items);
 }
 
-//PRIVATE FUNCTIONS
 void RequestsHandler::searchInFile() {
 	QVector <QPair<QVariant, QString> > vRetrievalResult = readFileLines();
 
-	//Process received data
 	int foundLines = 0;
 	while(foundLines != vRetrievalResult.size()) {
 		if ( vRetrievalResult.at(foundLines).second.contains(
@@ -94,8 +94,9 @@ void RequestsHandler::searchInFile() {
 QVector <QPair<QVariant, QString> > RequestsHandler::readFileLines() {
 	QVector <QPair<QVariant, QString> > vRetrievalResult;
 
-	//Open file
 	QFile file(mServerManager->getPath());
+	qDebug() << mServerManager->getPath();
+
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		file.close();
 		return vRetrievalResult;
@@ -107,16 +108,16 @@ QVector <QPair<QVariant, QString> > RequestsHandler::readFileLines() {
 	while (!in.atEnd()) {
 		lineNumber++;
 		QString lineText = in.readLine();
+		qDebug() << lineText;
 		vRetrievalResult.push_back(QPair<QVariant , QString >(lineNumber,lineText));
 	}
 	return vRetrievalResult;
 }
 
-void RequestsHandler::createFileListRecursively(QString path,   //blabla bla
+void RequestsHandler::createFileListRecursively(QString path,
 												QStringList *mList,
 												QString prefix,
 												bool recursively) {
-//TO DO nazewnictowo -ujednolicić przedrostki (mList)
 
 	QDir dirForFiles = QDir(path);
 	QStringList filesList;

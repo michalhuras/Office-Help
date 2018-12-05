@@ -168,11 +168,10 @@ void MainWindow::displayFilesAndResultsInDirectory() {
 
 void MainWindow::pathChanged(QString newPath, QString newName) {
 	QString path = newPath;
-	qDebug() << "Odebrałem  " << newPath;
-	qDebug() << "name       " << newName;
 	if (newName != "")
 		path += "/" + newName;
 	ui->pathBox->setText(path);
+	emit onPathBoxEditingFinishedSignal(path);
 }
 
 void MainWindow::on_pathBox_editingFinished() {
@@ -182,9 +181,6 @@ void MainWindow::on_pathBox_editingFinished() {
 void MainWindow::on_textToFindBox_editingFinished() {
 	emit onTextToFindBoxEditingFinishedSignal(ui->textToFindBox->text());
 }
-
-//Pomysł -> w trakcie działania programu można ustawiać te bozy na "setreadonly" żeby nie
-// było jakiś problemów
 
 void MainWindow::on_pushButton_4_clicked()
 {
