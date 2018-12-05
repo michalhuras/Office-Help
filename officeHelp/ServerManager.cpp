@@ -3,8 +3,8 @@
 #include <QDebug>
 
 ServerManager::ServerManager() :
-		mPath("C:/TestingCatalog/DokumentTekstowy1.txt"),
-		mTextToSearch("ala"),
+		mPath("C:/"),
+		mTextToSearch(""),
 		mSearchMode(CUS::inThisFile) {
 }
 

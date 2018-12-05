@@ -14,6 +14,9 @@ FileDialog::FileDialog(QWidget *parent) :
 						QDir::AllDirs);
 	dirModel->setRootPath(newPath);
 	ui->treeView->setModel(dirModel);
+	ui->treeView->hideColumn(1);
+	ui->treeView->hideColumn(2);
+	ui->treeView->hideColumn(3);
 
 	fileModel = new QFileSystemModel(this);
 	fileModel->setFilter(
