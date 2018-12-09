@@ -9,11 +9,11 @@
 
 #include <datastructevidence.hpp>
 
-class ServerManager :public QObject {
+class ModelManager :public QObject {
 	Q_OBJECT
 
 public:
-	ServerManager();
+	ModelManager();
 	QString getPath();
 	QString getTextToSearch();
 	CUS::searchMode getSearchMode();

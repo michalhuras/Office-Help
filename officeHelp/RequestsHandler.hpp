@@ -10,13 +10,13 @@
 #include <QVariant>
 
 #include <datastructevidence.hpp>
-#include <ServerManager.hpp>
+#include <ModelManager.hpp>
 
 class RequestsHandler :public QObject {
 	Q_OBJECT
 
 public:
-	RequestsHandler(ServerManager *aServerManager);
+	RequestsHandler(ModelManager *aServerManager);
 
 signals:
 	void displaySearchInFileResults(QVector <QPair<QVariant, QString> >);
@@ -28,12 +28,12 @@ public slots:
 	void catalogPathChangeSlot(QString newValue);
 	void wordToSearchChangeSlot(QString newValue);
 	void searchButtonClicked();
-	void showFilesInDirectoryButtonClicked();
-	void showFilesInDirectoryRecursivelyButtonClicked(); // TODO -za długa nazwa
+	QStringList showFilesInDirectory();
+	void showFilesInDirectoryRecursivelyButtonClicked();
 	void searchInListedFilesButton2Clicked();
 
 private:
-	ServerManager *mServerManager;
+	ModelManager *mServerManager;
 
 	void searchInFile();
 	QVector <QPair<QVariant, QString> > readFileLines();
@@ -49,5 +49,3 @@ private:
 };
 
 #endif // REQUESTSHANDLER_H
-
-//TO DO -usunąć zbędne komentarze z plików cpp

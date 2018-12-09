@@ -1,61 +1,61 @@
-#include "ServerManager.hpp"
+#include "ModelManager.hpp"
 
 #include <QDebug>
 
-ServerManager::ServerManager() :
+ModelManager::ModelManager() :
 		mPath("C:/"),
 		mTextToSearch(""),
 		mSearchMode(CUS::inThisFile) {
 }
 
-QString ServerManager::getPath() {
+QString ModelManager::getPath() {
 	return mPath;
 }
 
-QString ServerManager::getTextToSearch() {
+QString ModelManager::getTextToSearch() {
 	return mTextToSearch;
 }
 
-CUS::searchMode ServerManager::getSearchMode() {
+CUS::searchMode ModelManager::getSearchMode() {
 	return mSearchMode;
 }
 
-QStringList ServerManager::getFilesInDirectory() {
+QStringList ModelManager::getFilesInDirectory() {
 	return mFilesInDirectory;
 }
 
-QStringList ServerManager::getFilesInDirectoryRecursively() {
+QStringList ModelManager::getFilesInDirectoryRecursively() {
 	return mFilesInDirectoryRecursively;
 }
 
-QList<QTreeWidgetItem *> ServerManager::getSearchResultInFile() {
+QList<QTreeWidgetItem *> ModelManager::getSearchResultInFile() {
 	return mSearchResultInFile;
 }
 
-QList<QTreeWidgetItem *> ServerManager::getFilesInDirectoryRecursivelyToView() {
+QList<QTreeWidgetItem *> ModelManager::getFilesInDirectoryRecursivelyToView() {
 	return mFilesInDirectoryRecursivelyView;
 }
 
-void ServerManager::setPath(QString aPath) {
+void ModelManager::setPath(QString aPath) {
 	if (mPath != aPath)
 		mPath = aPath;
 }
 
-void ServerManager::setTextToSearch(QString aTextToSearch) {
+void ModelManager::setTextToSearch(QString aTextToSearch) {
 	if (mTextToSearch != aTextToSearch)
 		mTextToSearch = aTextToSearch;
 }
 
-void ServerManager::setSearchMode(CUS::searchMode aSearchMode) {
+void ModelManager::setSearchMode(CUS::searchMode aSearchMode) {
 	if (aSearchMode != mSearchMode)
 		mSearchMode = aSearchMode;
 }
 
-void ServerManager::setfilesInDirectory(QStringList filesInDirectory) {
+void ModelManager::setfilesInDirectory(QStringList filesInDirectory) {
 	mFilesInDirectory = filesInDirectory;
 }
 
-void ServerManager::setfilesInDirectoryRecursively(QStringList filesInDirectoryRecursively) {
+void ModelManager::setfilesInDirectoryRecursively(QStringList filesInDirectoryRecursively) {
 	mFilesInDirectoryRecursively = filesInDirectoryRecursively;
 
 	QList<QTreeWidgetItem *> items;
@@ -88,9 +88,6 @@ void ServerManager::setfilesInDirectoryRecursively(QStringList filesInDirectoryR
 }
 
 
-void ServerManager::setFilesAndResultsInDirectory(QList<QTreeWidgetItem *> SearchResultInFile) {
+void ModelManager::setFilesAndResultsInDirectory(QList<QTreeWidgetItem *> SearchResultInFile) {
 	mSearchResultInFile = SearchResultInFile;
 }
-
-// TO DO:
-// Dopisać do sygnałów i slotów testy jednostkowe`

@@ -5,6 +5,7 @@
 
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
+#include "ui_MainWindow.h"
 #include "ui_FileDialog.hpp"
 
 #include <QDebug>
@@ -13,7 +14,7 @@
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent),
 	  ui(new Ui::MainWindow),
-	  mServerManager(new ServerManager),
+	  mServerManager(new ModelManager),
 	  mRequestsHandler(new RequestsHandler(mServerManager)) {
 	ui->setupUi(this);
 
@@ -57,11 +58,7 @@ void MainWindow::setTablesStartingParameters(){
 }
 
 void MainWindow::setSignalsAndSlotsConnections() {
-	//TO DO styl łamania jeden ustalić i ujednolić
-
 	//mServerManager - mRequestsHandler
-	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectory(QStringList)),
-					 mServerManager, SLOT(setfilesInDirectory(QStringList)));
 	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectoryRecursively(QStringList)),
 					 mServerManager, SLOT(setfilesInDirectoryRecursively(QStringList)));
 	QObject::connect(mRequestsHandler, SIGNAL(displayFilesAndResultsInDirectory(QList<QTreeWidgetItem *>)),
@@ -86,8 +83,6 @@ void MainWindow::setSignalsAndSlotsConnections() {
 					 mRequestsHandler, SLOT(wordToSearchChangeSlot(QString)));
 	QObject::connect(this, SIGNAL(searchButtonClicked()),
 					 mRequestsHandler, SLOT(searchButtonClicked()));
-	QObject::connect(this, SIGNAL(showFilesInDirectoryButtonClicked()),
-					 mRequestsHandler, SLOT(showFilesInDirectoryButtonClicked()));
 	QObject::connect(this, SIGNAL(showFilesInDirectoryRecursivelyButtonClicked()),
 					 mRequestsHandler, SLOT( showFilesInDirectoryRecursivelyButtonClicked()));
 	QObject::connect(this, SIGNAL(searchInListedFilesButton2Clicked()),
@@ -113,22 +108,6 @@ void MainWindow::displaySearchInFileResults(QVector <QPair<QVariant, QString> > 
 		rowNumber++;
 		searchResults.erase(searchResults.begin());
 	}
-}
-
-void MainWindow::displayFilesInDirectory() {
-	/*
-	QStringList filesList = mServerManager->getFilesInDirectory();
-	ui->tableWidget_2->setRowCount(filesList.size());
-	QVariant rowNumber = 0;
-	while (!filesList.isEmpty()){
-		ui->tableWidget_2->setItem(rowNumber.toInt(),0,new QTableWidgetItem(
-									   rowNumber.toString()));
-		ui->tableWidget_2->setItem(rowNumber.toInt(),1,new QTableWidgetItem(
-									   filesList.first()));
-		rowNumber = rowNumber.toInt() + 1;
-		filesList.erase(filesList.begin());
-	}
-	*/
 }
 
 void MainWindow::displayFilesInDirectoryRecursively(){
@@ -222,7 +201,13 @@ void MainWindow::on_pushButton_3_clicked()
 
 void MainWindow::on_pushButton_5_clicked()
 {
-	emit showFilesInDirectoryButtonClicked();
+	QStringList filesList = mRequestsHandler->showFilesInDirectory();
+	ui->treeWidget_2->setColumnCount(1);
+	ui->treeWidget_2->setHeaderLabel("File");
+	QList<QTreeWidgetItem *> items;
+	for (int i = 0; i < filesList.size(); i++)
+		items.append(new QTreeWidgetItem((QTreeWidget*)0, QStringList(filesList.at(i))));
+	ui->treeWidget_2->insertTopLevelItems(0, items);
 }
 
 void MainWindow::on_pushButton_6_clicked()

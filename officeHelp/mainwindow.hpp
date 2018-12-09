@@ -4,14 +4,12 @@
 #include <QMainWindow>
 #include <QString>
 #include <QStringList>
-#include <QDebug> //TO DO
+#include <QDebug>
 #include <QVariant>
 
 #include "datastructevidence.hpp"
 #include "RequestsHandler.hpp"
-#include "ServerManager.hpp"
-
-// TO DO dopisać‼ funkcje opcje
+#include "ModelManager.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -26,7 +24,7 @@ public:
 
 private:
 	Ui::MainWindow *ui;
-	ServerManager *mServerManager;
+	ModelManager *mServerManager;
 	RequestsHandler *mRequestsHandler;
 
 	void setTablesStartingParameters();
@@ -47,7 +45,6 @@ signals:
 
 private slots:
 	void displaySearchInFileResults(QVector <QPair<QVariant, QString> > searchResults);
-	void displayFilesInDirectory();
 	void displayFilesInDirectoryRecursively();
 	void displayFilesAndResultsInDirectory();
 	void pathChanged(QString newPath, QString newName);

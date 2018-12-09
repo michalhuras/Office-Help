@@ -26,15 +26,15 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     RequestsHandler.cpp \
-    ServerManager.cpp \
-    ui_FileDialog.cpp
+    ui_FileDialog.cpp \
+    ModelManager.cpp
 
 HEADERS += \
     mainwindow.hpp \
     RequestsHandler.hpp \
-    ServerManager.hpp \
     datastructevidence.hpp \
-    ui_FileDialog.hpp
+    ui_FileDialog.hpp \
+    ModelManager.hpp
 
 FORMS += \
         mainwindow.ui \

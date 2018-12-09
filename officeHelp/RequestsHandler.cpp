@@ -9,7 +9,7 @@
 
 #include <QDebug>
 
-RequestsHandler::RequestsHandler(ServerManager *aServerManager):
+RequestsHandler::RequestsHandler(ModelManager *aServerManager):
 		mServerManager(aServerManager) {;}
 
 void RequestsHandler::catalogPathChangeSlot(QString newValue) {
@@ -24,22 +24,16 @@ void RequestsHandler::searchButtonClicked() {
 searchInFile();
 }
 
-void RequestsHandler::showFilesInDirectoryButtonClicked() {
+QStringList RequestsHandler::showFilesInDirectory() {
 	QString catalogPath = mServerManager->getPath();
-
-	//Check if path is to file or Catalog
 	QFileInfo fileInformations(catalogPath);
 	catalogPath = fileInformations.path();
-
-	//Create file list
 	QDir pathDir = QDir(catalogPath);
 	QStringList filesList;
 	filesList = pathDir.entryList(QStringList("*"),
 								  QDir::Files | QDir::NoSymLinks,
 								  QDir::Name);
-	//TODO wyeksportować to do osobnej funkcji żeby można było to wykorzystać w innych metodach
-
-	emit displayFilesInDirectory(filesList);
+	return filesList;
 }
 
 void RequestsHandler::showFilesInDirectoryRecursivelyButtonClicked() { //TO Do za długa nazwa
