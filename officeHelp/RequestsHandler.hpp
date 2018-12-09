@@ -17,6 +17,7 @@ class RequestsHandler :public QObject {
 
 public:
 	RequestsHandler(ModelManager *aServerManager);
+	QList<QTreeWidgetItem *> SearchInFiles();
 
 signals:
 	void displaySearchInFileResults(QVector <QPair<QVariant, QString> >);
@@ -28,9 +29,9 @@ public slots:
 	void catalogPathChangeSlot(QString newValue);
 	void wordToSearchChangeSlot(QString newValue);
 	void searchButtonClicked();
-	QStringList showFilesInDirectory();
+	QStringList GetListOfFilesInDirectory();
 	void showFilesInDirectoryRecursivelyButtonClicked();
-	void searchInListedFilesButton2Clicked();
+	//void searchInListedFilesButton2Clicked();
 
 private:
 	ModelManager *mServerManager;
@@ -44,7 +45,7 @@ private:
 			bool recursively = false);
 	QList<QTreeWidgetItem *> createQTreeWidgetItemList(
 			QString catalogPath,
-			QStringList *filesList,
+			QStringList filesList,
 			QString searchedText);
 };
 

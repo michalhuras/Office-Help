@@ -21,11 +21,12 @@ void RequestsHandler::wordToSearchChangeSlot(QString newValue) {
 }
 
 void RequestsHandler::searchButtonClicked() {
-searchInFile();
+	searchInFile();
 }
 
-QStringList RequestsHandler::showFilesInDirectory() {
+QStringList RequestsHandler::GetListOfFilesInDirectory() {
 	QString catalogPath = mServerManager->getPath();
+	catalogPath += "/";
 	QFileInfo fileInformations(catalogPath);
 	catalogPath = fileInformations.path();
 	QDir pathDir = QDir(catalogPath);
@@ -36,7 +37,7 @@ QStringList RequestsHandler::showFilesInDirectory() {
 	return filesList;
 }
 
-void RequestsHandler::showFilesInDirectoryRecursivelyButtonClicked() { //TO Do za długa nazwa
+void RequestsHandler::showFilesInDirectoryRecursivelyButtonClicked() {
 	QString catalogPath = mServerManager->getPath();
 	QStringList filesList;
 	QStringList *mFilesList = &filesList;
@@ -46,11 +47,12 @@ void RequestsHandler::showFilesInDirectoryRecursivelyButtonClicked() { //TO Do z
 	catalogPath = fileInformations.path();
 
 	//Create file list recursively
-	createFileListRecursively(catalogPath, mFilesList, "", true);
-	emit displayFilesInDirectoryRecursively(filesList);
-	//TO DO czy to jest najlepsza opcja przekazywania -wskaźnik
+
+	//createFileListRecursively(catalogPath, mFilesList, "", true);
+	//emit displayFilesInDirectoryRecursively(filesList);
 }
 
+/*
 void RequestsHandler::searchInListedFilesButton2Clicked() {
 	QString catalogPath = mServerManager->getPath();
 	QStringList *filesList = new QStringList;
@@ -68,6 +70,19 @@ void RequestsHandler::searchInListedFilesButton2Clicked() {
 										mServerManager->getTextToSearch());
 
 	emit displayFilesAndResultsInDirectory(items);
+}
+*/
+
+QList<QTreeWidgetItem *> RequestsHandler::SearchInFiles() { // MH
+	QString catalogPath = mServerManager->getPath();
+	QStringList FilesInDirectory = GetListOfFilesInDirectory();
+	// TODO jako argument przekazywany
+	qDebug() <<"FilesInDirectory  " << FilesInDirectory;
+
+	return createQTreeWidgetItemList(catalogPath,
+									 FilesInDirectory,
+									 mServerManager->getTextToSearch());
+
 }
 
 void RequestsHandler::searchInFile() {
@@ -108,6 +123,7 @@ QVector <QPair<QVariant, QString> > RequestsHandler::readFileLines() {
 	return vRetrievalResult;
 }
 
+/*
 void RequestsHandler::createFileListRecursively(QString path,
 												QStringList *mList,
 												QString prefix,
@@ -143,16 +159,18 @@ void RequestsHandler::createFileListRecursively(QString path,
 		catalogList.erase(catalogList.begin());
 	}
 }
+*/
 
 QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 		QString catalogPath,
-		QStringList *filesList,
+		QStringList filesList,
 		QString searchedText){
+	qDebug() << "Jestem tutaj";
 
 	QList<QTreeWidgetItem *> items;
 	int fileNumber = 1;
-	int numberOfFiles = filesList->size();
-	while(!filesList->isEmpty()) {
+	int numberOfFiles = filesList.size();
+	while(!filesList.isEmpty()) {
 		QTreeWidgetItem *nextFile = new QTreeWidgetItem();
 		if ((numberOfFiles > 99 && fileNumber > 99) ||
 			(numberOfFiles <100 &&  numberOfFiles > 9 &&
@@ -169,10 +187,11 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 		else {
 			nextFile->setText(0, QString::number(fileNumber));
 		}
-		nextFile->setText(1, filesList->first());
+		nextFile->setText(1, filesList.first());
+		qDebug() << "Jestem tutaj 2";
 
 		QStringList vRetrievalResult;
-		QFile file(catalogPath + "/" + filesList->at(0));
+		QFile file(catalogPath + "/" + filesList.at(0));
 		if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 			//Read lines from file and save to QStringlist
 			QTextStream in(&file);
@@ -181,6 +200,7 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 				vRetrievalResult << lineText;
 			}
 		}
+		qDebug() << "Jestem tutaj 3";
 
 		QList<QTreeWidgetItem *> nextRow;
 		//Process received data
@@ -236,13 +256,13 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 			}
 		lineNumber++;
 		}
+		qDebug() << "Jestem tutaj 4";
 
 		// adding a row to an item starts a subtree
 		nextFile->insertChildren(1, nextRow);
 		items.append(nextFile);
-		filesList->removeFirst();
+		filesList.removeFirst();
 		fileNumber++;
 	}
-
 	return items;
 }
