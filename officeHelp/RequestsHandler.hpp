@@ -4,7 +4,7 @@
 #include <QVector>
 #include <QString>
 #include <QStringList>
-#include <QDebug> // TODO
+#include <QDebug>
 #include <QObject>
 #include <QPair>
 #include <QVariant>
@@ -17,7 +17,14 @@ class RequestsHandler :public QObject {
 
 public:
 	RequestsHandler(ModelManager *aServerManager);
-	QList<QTreeWidgetItem *> SearchInFiles();
+	QStringList GetListOfFilesInDirectory();
+	QList<QTreeWidgetItem *> SearchInFiles(QStringList FilesList);
+	void UpdateFilesInDirectoryRecursively();
+	QStringList createFileListRecursively(
+			QString CatalogPath,
+			QString prefix = "",
+			bool recursively = false);
+	void UpdateSearchInAllFilesRecursively();
 
 signals:
 	void displaySearchInFileResults(QVector <QPair<QVariant, QString> >);
@@ -29,20 +36,13 @@ public slots:
 	void catalogPathChangeSlot(QString newValue);
 	void wordToSearchChangeSlot(QString newValue);
 	void searchButtonClicked();
-	QStringList GetListOfFilesInDirectory();
-	void showFilesInDirectoryRecursivelyButtonClicked();
-	//void searchInListedFilesButton2Clicked();
 
 private:
 	ModelManager *mServerManager;
 
 	void searchInFile();
 	QVector <QPair<QVariant, QString> > readFileLines();
-	void createFileListRecursively(
-			QString CatalogPath,
-			QStringList *mList,
-			QString prefix = "",
-			bool recursively = false);
+
 	QList<QTreeWidgetItem *> createQTreeWidgetItemList(
 			QString catalogPath,
 			QStringList filesList,

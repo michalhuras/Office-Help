@@ -56,16 +56,9 @@ void MainWindow::setTablesStartingParameters(){
 	ui->treeWidget_3->resizeColumnToContents(1);
 	ui->treeWidget_3->resizeColumnToContents(2);
 	ui->treeWidget_3->resizeColumnToContents(3);
-
 }
 
 void MainWindow::setSignalsAndSlotsConnections() {
-	//mServerManager - mRequestsHandler
-	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectoryRecursively(QStringList)),
-					 mServerManager, SLOT(setfilesInDirectoryRecursively(QStringList)));
-	QObject::connect(mRequestsHandler, SIGNAL(displayFilesAndResultsInDirectory(QList<QTreeWidgetItem *>)),
-					 mServerManager, SLOT(setFilesAndResultsInDirectory(QList<QTreeWidgetItem *>)));
-
 	//mServerManager
 	QObject::connect(this, SIGNAL(onPathBoxEditingFinishedSignal(QString)),
 					 mServerManager, SLOT(setPath(QString)));
@@ -85,16 +78,10 @@ void MainWindow::setSignalsAndSlotsConnections() {
 					 mRequestsHandler, SLOT(wordToSearchChangeSlot(QString)));
 	QObject::connect(this, SIGNAL(searchButtonClicked()),
 					 mRequestsHandler, SLOT(searchButtonClicked()));
-	QObject::connect(this, SIGNAL(showFilesInDirectoryRecursivelyButtonClicked()),
-					 mRequestsHandler, SLOT( showFilesInDirectoryRecursivelyButtonClicked()));
 	//QObject::connect(this, SIGNAL(searchInListedFilesButton2Clicked()),
 	//				 mRequestsHandler, SLOT(searchInListedFilesButton2Clicked()));
 	QObject::connect(mRequestsHandler, SIGNAL( displaySearchInFileResults(QVector <QPair<QVariant, QString> >)),
 					 this, SLOT(displaySearchInFileResults( QVector <QPair<QVariant, QString> >)));
-	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectory(QStringList)),
-					 this, SLOT(displayFilesInDirectory()));
-	QObject::connect(mRequestsHandler, SIGNAL(displayFilesInDirectoryRecursively(QStringList)),
-					 this, SLOT(displayFilesInDirectoryRecursively()));
 	QObject::connect(mRequestsHandler, SIGNAL(displayFilesAndResultsInDirectory(QList<QTreeWidgetItem *>)),
 					 this, SLOT(displayFilesAndResultsInDirectory()));
 }
@@ -110,21 +97,6 @@ void MainWindow::displaySearchInFileResults(QVector <QPair<QVariant, QString> > 
 		rowNumber++;
 		searchResults.erase(searchResults.begin());
 	}
-}
-
-void MainWindow::displayFilesInDirectoryRecursively(){
-	QStringList labels = (QStringList() << "Number" << "File name");
-	while (ui->treeWidget_3->topLevelItemCount())
-		ui->treeWidget_3->takeTopLevelItem(0);
-	ui->treeWidget_3->setColumnCount(2);
-	ui->treeWidget_3->setHeaderLabels(labels);
-	ui->treeWidget_3->resizeColumnToContents(0);
-	ui->treeWidget_3->resizeColumnToContents(1);
-	ui->treeWidget_3->insertTopLevelItems(
-				0,
-				mServerManager->getFilesInDirectoryRecursivelyToView());
-	ui->treeWidget_3->setSortingEnabled(true);
-	ui->treeWidget_3->sortByColumn(0 ,Qt::AscendingOrder);
 }
 
 void MainWindow::displayFilesAndResultsInDirectory() {
@@ -207,7 +179,6 @@ void MainWindow::on_pushButton_5_clicked()
 	while (ui->treeWidget_2->topLevelItemCount())
 		ui->treeWidget_2->takeTopLevelItem(0);
 	qDebug()<< "Show files in directory" ;
-
 	QStringList filesList = mRequestsHandler->GetListOfFilesInDirectory();
 	ui->treeWidget_2->setColumnCount(1);
 	ui->treeWidget_2->setHeaderLabel("File");
@@ -219,16 +190,28 @@ void MainWindow::on_pushButton_5_clicked()
 
 void MainWindow::on_pushButton_6_clicked()
 {
-	emit showFilesInDirectoryRecursivelyButtonClicked();
+	// Show files in directory recursively
+	mRequestsHandler->UpdateFilesInDirectoryRecursively();
+	QStringList labels = (QStringList() << "Number" << "File name");
+	while (ui->treeWidget_3->topLevelItemCount())
+		ui->treeWidget_3->takeTopLevelItem(0);
+	ui->treeWidget_3->setColumnCount(2);
+	ui->treeWidget_3->setHeaderLabels(labels);
+	ui->treeWidget_3->resizeColumnToContents(0);
+	ui->treeWidget_3->resizeColumnToContents(1);
+	ui->treeWidget_3->insertTopLevelItems(
+				0,
+				mServerManager->getFilesInDirectoryRecursivelyToView());
+	ui->treeWidget_3->setSortingEnabled(true);
+	ui->treeWidget_3->sortByColumn(0 ,Qt::AscendingOrder);
 }
 
-void MainWindow::on_pushButton_8_clicked() // MH
+void MainWindow::on_pushButton_8_clicked()
 {
-	qDebug() << "Search in listed files";
 	// Search in listed files
-	QList<QTreeWidgetItem *> item = mRequestsHandler->SearchInFiles();
-	qDebug() << "Size  " << item.size();
-
+	QStringList FilesList = mRequestsHandler->GetListOfFilesInDirectory();
+	QList<QTreeWidgetItem *> item =
+			mRequestsHandler->SearchInFiles(FilesList);
 	while (ui->treeWidget_2->topLevelItemCount())
 		ui->treeWidget_2->takeTopLevelItem(0);
 	ui->treeWidget_2->setColumnCount(4);
@@ -248,7 +231,25 @@ void MainWindow::on_pushButton_8_clicked() // MH
 
 void MainWindow::on_pushButton_10_clicked()
 {
-	//emit searchInListedFilesButton2Clicked();
+	// Search in listed files
+	mRequestsHandler->UpdateSearchInAllFilesRecursively();
+	while (ui->treeWidget_3->topLevelItemCount())
+		ui->treeWidget_3->takeTopLevelItem(0);
+	ui->treeWidget_3->setColumnCount(4);
+	QStringList labels =
+			(QStringList() << "Number" << "File name" << "Results" << "Expanded results");
+	ui->treeWidget_3->setHeaderLabels(labels);
+	ui->treeWidget_3->insertTopLevelItems(
+			0,
+			mServerManager->getSearchResultInFile());
+	ui->treeWidget_3->setSortingEnabled(true);
+	ui->treeWidget_3->sortByColumn(0 ,Qt::AscendingOrder);
+	ui->treeWidget_3->expandAll();
+	ui->treeWidget_3->resizeColumnToContents(0);
+	ui->treeWidget_3->resizeColumnToContents(1);
+	ui->treeWidget_3->resizeColumnToContents(2);
+	ui->treeWidget_3->resizeColumnToContents(3);
+	ui->treeWidget_3->collapseAll();
 }
 
 void MainWindow::on_pushButton_2_clicked()

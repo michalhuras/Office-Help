@@ -37,50 +37,43 @@ QStringList RequestsHandler::GetListOfFilesInDirectory() {
 	return filesList;
 }
 
-void RequestsHandler::showFilesInDirectoryRecursivelyButtonClicked() {
+void RequestsHandler::UpdateFilesInDirectoryRecursively(){
 	QString catalogPath = mServerManager->getPath();
 	QStringList filesList;
-	QStringList *mFilesList = &filesList;
 
 	//Check if path is to file or Catalog
 	QFileInfo fileInformations(catalogPath);
 	catalogPath = fileInformations.path();
 
 	//Create file list recursively
-
-	//createFileListRecursively(catalogPath, mFilesList, "", true);
-	//emit displayFilesInDirectoryRecursively(filesList);
+	filesList = createFileListRecursively(catalogPath,"", true);
+	mServerManager->setfilesInDirectoryRecursively(filesList);
 }
 
-/*
-void RequestsHandler::searchInListedFilesButton2Clicked() {
+void RequestsHandler::UpdateSearchInAllFilesRecursively() {
 	QString catalogPath = mServerManager->getPath();
-	QStringList *filesList = new QStringList;
+	QStringList filesList;
 
 	//Check if path is to file or Catalog
 	QFileInfo fileInformations(catalogPath);
 	catalogPath = fileInformations.path();
 
 	//Create file list
-	createFileListRecursively(catalogPath, filesList, "", true);
+	filesList = createFileListRecursively(catalogPath, "", true);
 
 	QList<QTreeWidgetItem *> items = createQTreeWidgetItemList(
 										catalogPath,
 										filesList,
 										mServerManager->getTextToSearch());
-
-	emit displayFilesAndResultsInDirectory(items);
+	mServerManager->setFilesAndResultsInDirectory(items);
 }
-*/
 
-QList<QTreeWidgetItem *> RequestsHandler::SearchInFiles() { // MH
+QList<QTreeWidgetItem *> RequestsHandler::SearchInFiles(QStringList FilesList) {
 	QString catalogPath = mServerManager->getPath();
-	QStringList FilesInDirectory = GetListOfFilesInDirectory();
-	// TODO jako argument przekazywany
-	qDebug() <<"FilesInDirectory  " << FilesInDirectory;
+	qDebug() <<"FilesList  " << FilesList;
 
 	return createQTreeWidgetItemList(catalogPath,
-									 FilesInDirectory,
+									 FilesList,
 									 mServerManager->getTextToSearch());
 
 }
@@ -123,12 +116,11 @@ QVector <QPair<QVariant, QString> > RequestsHandler::readFileLines() {
 	return vRetrievalResult;
 }
 
-/*
-void RequestsHandler::createFileListRecursively(QString path,
-												QStringList *mList,
+QStringList RequestsHandler::createFileListRecursively(QString path,
 												QString prefix,
 												bool recursively) {
 
+	QStringList mList;
 	QDir dirForFiles = QDir(path);
 	QStringList filesList;
 	filesList = dirForFiles.entryList(QStringList("*"), QDir::Files | QDir::NoSymLinks,
@@ -140,7 +132,7 @@ void RequestsHandler::createFileListRecursively(QString path,
 			fileToAdd = prefix;
 		else
 			fileToAdd = prefix + "/";
-		mList->append(prefix + filesList.first());
+		mList.append(prefix + filesList.first());
 		filesList.erase(filesList.begin());
 	}
 
@@ -151,21 +143,21 @@ void RequestsHandler::createFileListRecursively(QString path,
 
 	while (!catalogList.isEmpty()) {
 		if (recursively)
-			createFileListRecursively(
+			mList += createFileListRecursively(
 						path + "/" + catalogList.first(),
-						mList,
 						prefix + "/" + catalogList.first(),
 						true);
 		catalogList.erase(catalogList.begin());
 	}
+
+	return mList;
 }
-*/
+
 
 QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 		QString catalogPath,
 		QStringList filesList,
 		QString searchedText){
-	qDebug() << "Jestem tutaj";
 
 	QList<QTreeWidgetItem *> items;
 	int fileNumber = 1;
@@ -188,7 +180,6 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 			nextFile->setText(0, QString::number(fileNumber));
 		}
 		nextFile->setText(1, filesList.first());
-		qDebug() << "Jestem tutaj 2";
 
 		QStringList vRetrievalResult;
 		QFile file(catalogPath + "/" + filesList.at(0));
@@ -200,7 +191,6 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 				vRetrievalResult << lineText;
 			}
 		}
-		qDebug() << "Jestem tutaj 3";
 
 		QList<QTreeWidgetItem *> nextRow;
 		//Process received data
@@ -256,7 +246,6 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 			}
 		lineNumber++;
 		}
-		qDebug() << "Jestem tutaj 4";
 
 		// adding a row to an item starts a subtree
 		nextFile->insertChildren(1, nextRow);

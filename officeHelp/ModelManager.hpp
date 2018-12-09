@@ -21,13 +21,14 @@ public:
 	QStringList getFilesInDirectoryRecursively();
 	QList<QTreeWidgetItem *> getSearchResultInFile();
 	QList<QTreeWidgetItem *> getFilesInDirectoryRecursivelyToView();
+	void setfilesInDirectoryRecursively(QStringList filesInDirectoryRecursively);
+
 
 public slots:
 	void setPath(QString aPath);
 	void setTextToSearch(QString aTextToSearch);
 	void setSearchMode(CUS::searchMode aSearchMode);
 	void setfilesInDirectory(QStringList filesInDirectory);
-	void setfilesInDirectoryRecursively(QStringList filesInDirectoryRecursively);
 	void setFilesAndResultsInDirectory(QList<QTreeWidgetItem *> SearchResultInFile);
 
 

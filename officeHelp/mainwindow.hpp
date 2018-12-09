@@ -45,7 +45,6 @@ signals:
 
 private slots:
 	void displaySearchInFileResults(QVector <QPair<QVariant, QString> > searchResults);
-	void displayFilesInDirectoryRecursively();
 	void displayFilesAndResultsInDirectory();
 	void pathChanged(QString newPath, QString newName);
 
