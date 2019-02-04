@@ -8,9 +8,6 @@
 #include "ui_MainWindow.h"
 #include "ui_FileDialog.hpp"
 
-#include <QDebug>
-
-
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent),
 	  ui(new Ui::MainWindow),
@@ -171,7 +168,6 @@ void MainWindow::on_pushButton_5_clicked()
 	// Show files in directory
 	while (ui->treeWidget_2->topLevelItemCount())
 		ui->treeWidget_2->takeTopLevelItem(0);
-	qDebug()<< "Show files in directory" ;
 	QStringList filesList = mRequestsHandler->GetListOfFilesInDirectory();
 	ui->treeWidget_2->setColumnCount(1);
 	ui->treeWidget_2->setHeaderLabel("File");

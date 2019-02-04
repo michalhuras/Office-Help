@@ -1,7 +1,5 @@
 #include "ModelManager.hpp"
 
-#include <QDebug>
-
 ModelManager::ModelManager() :
 		mPath("C:/"),
 		mTextToSearch(""),

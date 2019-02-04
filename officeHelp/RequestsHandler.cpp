@@ -7,17 +7,17 @@
 #include <QFileInfo>
 #include <QStandardItem>
 
-#include <QDebug>
+// #include <QDebug>
 
 RequestsHandler::RequestsHandler(ModelManager *aServerManager):
 		mServerManager(aServerManager) {;}
 
 void RequestsHandler::catalogPathChangeSlot(QString newValue) {
-	qDebug() << "catalog path changed:  " << newValue;
+	// qDebug() << "catalog path changed:  " << newValue;
 }
 
 void RequestsHandler::wordToSearchChangeSlot(QString newValue) {
-	qDebug() << "word to search changed:  " << newValue;
+	// qDebug() << "word to search changed:  " << newValue;
 }
 
 void RequestsHandler::searchButtonClicked() {
@@ -70,8 +70,6 @@ void RequestsHandler::UpdateSearchInAllFilesRecursively() {
 
 QList<QTreeWidgetItem *> RequestsHandler::SearchInFiles(QStringList FilesList) {
 	QString catalogPath = mServerManager->getPath();
-	qDebug() <<"FilesList  " << FilesList;
-
 	return createQTreeWidgetItemList(catalogPath,
 									 FilesList,
 									 mServerManager->getTextToSearch());
@@ -97,7 +95,6 @@ QVector <QPair<QVariant, QString> > RequestsHandler::readFileLines() {
 	QVector <QPair<QVariant, QString> > vRetrievalResult;
 
 	QFile file(mServerManager->getPath());
-	qDebug() << mServerManager->getPath();
 
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		file.close();
@@ -110,7 +107,6 @@ QVector <QPair<QVariant, QString> > RequestsHandler::readFileLines() {
 	while (!in.atEnd()) {
 		lineNumber++;
 		QString lineText = in.readLine();
-		qDebug() << lineText;
 		vRetrievalResult.push_back(QPair<QVariant , QString >(lineNumber,lineText));
 	}
 	return vRetrievalResult;
@@ -120,10 +116,6 @@ QStringList RequestsHandler::createFileListRecursively(
 		QString path,
 		QString prefix,
 		bool recursively) {
-	qDebug() << "createFileListRecursively  ";
-	qDebug() << "path "  << path;
-	qDebug() << "prefix "  << prefix;
-	qDebug() << "recursively "  << recursively;
 
 	QStringList mList;
 	QDir dirForFiles = QDir(path);
@@ -164,16 +156,10 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 		QStringList filesList,
 		QString searchedText){
 
-	qDebug() << "createQTreeWidgetItemList  ";
-	qDebug() << "catalogPath "  << catalogPath;
-	qDebug() << "filesList "  << filesList;
-	qDebug() << "searchedText "  << searchedText;
 	QList<QTreeWidgetItem *> items;
 	int fileNumber = 1;
 	int numberOfFiles = filesList.size();
 	while(!filesList.isEmpty()) {
-		qDebug() << "\t File number " << fileNumber;
-		qDebug() << "\t File  " << filesList.at(0);
 		QTreeWidgetItem *nextFile = new QTreeWidgetItem();
 		if ((numberOfFiles > 99 && fileNumber > 99) ||
 			(numberOfFiles <100 &&  numberOfFiles > 9 &&
@@ -207,21 +193,16 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 			}
 		}
 
-
-		qDebug() << "\t \t Tu ";
-
 		QList<QTreeWidgetItem *> nextRow;
 		//Process received data
 		int lineNumber = 0;
 		while(lineNumber < vRetrievalResult.count()) {
-			qDebug() << "\t \t Tam ";
 			if ( vRetrievalResult.at(lineNumber).contains(
 					 searchedText, Qt::CaseInsensitive)) {
 				if ((lineNumber <= vRetrievalResult.size() - 2) && (lineNumber >= 3)) {
 					QTreeWidgetItem *tempItem1 = new QTreeWidgetItem();
 					tempItem1->setText(2, vRetrievalResult.at(lineNumber));
 					nextRow << tempItem1;
-					qDebug() << "\t \t \t lineNumber " << lineNumber;
 					for (int i = lineNumber - 2; i <= lineNumber + 1; i++) {
 						QTreeWidgetItem *tempItem2 = new QTreeWidgetItem(tempItem1);
 						tempItem2->setText(3,vRetrievalResult.at(i));
@@ -265,8 +246,6 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 			}
 			lineNumber++;
 		}
-
-		qDebug() << "\t \t Jestem ";
 
 		// adding a row to an item starts a subtree
 		nextFile->insertChildren(1, nextRow);

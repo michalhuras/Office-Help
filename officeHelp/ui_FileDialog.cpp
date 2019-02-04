@@ -1,6 +1,5 @@
 #include "ui_FileDialog.hpp"
 #include "ui_ui_FileDialog.h"
-#include <QDebug>
 
 FileDialog::FileDialog(QWidget *parent) :
 	QDialog(parent),
