@@ -116,9 +116,14 @@ QVector <QPair<QVariant, QString> > RequestsHandler::readFileLines() {
 	return vRetrievalResult;
 }
 
-QStringList RequestsHandler::createFileListRecursively(QString path,
-												QString prefix,
-												bool recursively) {
+QStringList RequestsHandler::createFileListRecursively(
+		QString path,
+		QString prefix,
+		bool recursively) {
+	qDebug() << "createFileListRecursively  ";
+	qDebug() << "path "  << path;
+	qDebug() << "prefix "  << prefix;
+	qDebug() << "recursively "  << recursively;
 
 	QStringList mList;
 	QDir dirForFiles = QDir(path);
@@ -159,6 +164,10 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 		QStringList filesList,
 		QString searchedText){
 
+	qDebug() << "createQTreeWidgetItemList  ";
+	qDebug() << "catalogPath "  << catalogPath;
+	qDebug() << "filesList "  << filesList;
+	qDebug() << "searchedText "  << searchedText;
 	QList<QTreeWidgetItem *> items;
 	int fileNumber = 1;
 	int numberOfFiles = filesList.size();
