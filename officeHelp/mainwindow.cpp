@@ -166,13 +166,6 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 	}
 }
 
-void MainWindow::on_pushButton_3_clicked()
-{
-	//TO DO
-	//When clicked it will export results and all setings
-	//Creates .txt file, firstly saves settings from servermanager class, than results
-}
-
 void MainWindow::on_pushButton_5_clicked()
 {
 	// Show files in directory
@@ -250,9 +243,4 @@ void MainWindow::on_pushButton_10_clicked()
 	ui->treeWidget_3->resizeColumnToContents(2);
 	ui->treeWidget_3->resizeColumnToContents(3);
 	ui->treeWidget_3->collapseAll();
-}
-
-void MainWindow::on_pushButton_2_clicked()
-{
-
 }

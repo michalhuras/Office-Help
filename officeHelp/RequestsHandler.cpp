@@ -137,7 +137,7 @@ QStringList RequestsHandler::createFileListRecursively(
 			fileToAdd = prefix;
 		else
 			fileToAdd = prefix + "/";
-		mList.append(prefix + filesList.first());
+		mList.append(fileToAdd + filesList.first());
 		filesList.erase(filesList.begin());
 	}
 
@@ -172,6 +172,8 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 	int fileNumber = 1;
 	int numberOfFiles = filesList.size();
 	while(!filesList.isEmpty()) {
+		qDebug() << "\t File number " << fileNumber;
+		qDebug() << "\t File  " << filesList.at(0);
 		QTreeWidgetItem *nextFile = new QTreeWidgetItem();
 		if ((numberOfFiles > 99 && fileNumber > 99) ||
 			(numberOfFiles <100 &&  numberOfFiles > 9 &&
@@ -188,10 +190,14 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 		else {
 			nextFile->setText(0, QString::number(fileNumber));
 		}
-		nextFile->setText(1, filesList.first());
+		nextFile->setText(1, filesList.at(0));
 
 		QStringList vRetrievalResult;
-		QFile file(catalogPath + "/" + filesList.at(0));
+		QString vSlash = "/";
+		if (filesList.at(0).at(0) == QChar('/')){
+			vSlash = "";
+		}
+		QFile file(catalogPath + vSlash + filesList.at(0));
 		if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 			//Read lines from file and save to QStringlist
 			QTextStream in(&file);
@@ -201,22 +207,26 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 			}
 		}
 
+
+		qDebug() << "\t \t Tu ";
+
 		QList<QTreeWidgetItem *> nextRow;
 		//Process received data
 		int lineNumber = 0;
-		while(lineNumber < vRetrievalResult.size()) {
+		while(lineNumber < vRetrievalResult.count()) {
+			qDebug() << "\t \t Tam ";
 			if ( vRetrievalResult.at(lineNumber).contains(
 					 searchedText, Qt::CaseInsensitive)) {
-				if ((lineNumber <= vRetrievalResult.size() -2) && (lineNumber >= 3)) {
+				if ((lineNumber <= vRetrievalResult.size() - 2) && (lineNumber >= 3)) {
 					QTreeWidgetItem *tempItem1 = new QTreeWidgetItem();
 					tempItem1->setText(2, vRetrievalResult.at(lineNumber));
 					nextRow << tempItem1;
-					for (int i = lineNumber - 2; i <= lineNumber + 2; i++) {
+					qDebug() << "\t \t \t lineNumber " << lineNumber;
+					for (int i = lineNumber - 2; i <= lineNumber + 1; i++) {
 						QTreeWidgetItem *tempItem2 = new QTreeWidgetItem(tempItem1);
 						tempItem2->setText(3,vRetrievalResult.at(i));
 					}
-				}
-				else if ((lineNumber <3) && (vRetrievalResult.size() <= 4)) {
+				} else if ((lineNumber <3) && (vRetrievalResult.size() <= 4)) {
 					QTreeWidgetItem *tempItem1 = new QTreeWidgetItem();
 					tempItem1->setText(2, vRetrievalResult.at(lineNumber));
 					nextRow << tempItem1;
@@ -253,8 +263,10 @@ QList<QTreeWidgetItem *> RequestsHandler::createQTreeWidgetItemList(
 					tempItem2->setText(3,vRetrievalResult.at(lineNumber));
 				}
 			}
-		lineNumber++;
+			lineNumber++;
 		}
+
+		qDebug() << "\t \t Jestem ";
 
 		// adding a row to an item starts a subtree
 		nextFile->insertChildren(1, nextRow);
