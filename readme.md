@@ -23,10 +23,14 @@ From command line go to path where you want to bild
 
 
 # How to use
-**write path or search using button “….”.
-**write text to search.
-**chose to search in file, in catalog or in catalog recursively.
-**and search !
+** write path or search using button “….”
+
+** write text to search
+
+** chose to search in file, in catalog or in catalog recursively
+
+** and search !
+
 # Some screenshots of the application: 
 ![](1.png)
 
@@ -45,8 +49,11 @@ From command line go to path where you want to bild
 # Authors
 
 Micha³ Huras
-Tomasz Pienta 
+
+Tomasz Pienta
+ 
 Adam Wojdy³o
+
 # License
 
 
