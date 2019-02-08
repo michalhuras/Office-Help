@@ -56,4 +56,6 @@ Adam Wojdy³o
 
 # License
 
+European Union Public License 1.2
+[More about licences here: https://choosealicense.com/appendix/]
 
