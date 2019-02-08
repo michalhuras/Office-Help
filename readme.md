@@ -46,13 +46,15 @@ From command line go to path where you want to bild
 
 # Versioning
 
+1.0.0 Initial version
+
 # Authors
 
-Micha³ Huras
+Michal Huras
 
 Tomasz Pienta
  
-Adam Wojdy³o
+Adam Wojdylo
 
 # License
 
